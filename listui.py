@@ -1,13 +1,25 @@
-from luma.core.interface.serial import spi
-from luma.core.render import canvas
-from luma.oled.device import sh1106
-import time,os,datetime
+import time, os, datetime
+
 import RPi.GPIO as GPIO
-import shutil as sh
+import shutil   as sh
 import usb.core
-from subprocess import *
+
+from luma.core.interface.serial import spi
+from luma.core.render           import canvas
+from luma.oled.device           import sh1106
+from subprocess                 import *
 
 #GLOBALS
+lowBat=4
+
+VENDOR = 0x2367
+PRODUCT = 0x0002
+MOUNT_DIR = "/media/op1"
+HOME_DIR = "/home/ace/"
+USBID_OP1 = "*Teenage_OP-1*"
+
+op1path=MOUNT_DIR
+
 
 #KEYS
 key={}
@@ -21,55 +33,40 @@ key['press']=13
 key['down']=19
 key['right']=26
 
-
-lowBat=4
-
-VENDOR = 0x2367
-PRODUCT = 0x0002
-MOUNT_DIR = "/media/op1"
-USBID_OP1 = "*Teenage_OP-1*"
-
-op1path=MOUNT_DIR
-homedir="/home/pi/opc"
-
-
 #LIST OF SAMPLE PACKS AND PATHS
 sampleListSynth=[
-		["_josh","/home/pi/opc/samplepacks/_josh/"],
-		["courtyard","/home/pi/opc/samplepacks/courtyard/"],
-		["dawless","/home/pi/opc/samplepacks/dawless/"],
-		["C-MIX","/home/pi/opc/samplepacks/C-MIX/"],
-		["inkd","/home/pi/opc/samplepacks/op1_3.2/inkdd/"],
-		["Dark Energy","/home/pi/opc/samplepacks/op1_3.2/Dark Energy/"],
-		["memories","/home/pi/opc/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/memories/"],
-		["opines","/home/pi/opc/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/opines/"],
-		["vanilla sun","/home/pi/opc/samplepacks/vanilla sun/"],
-		["mellotron","/home/pi/opc/samplepacks/mellotronAifs/"],
-		["hs dsynth","/home/pi/opc/samplepacks/hs dsynth vol1/"],
-		["cassette","/home/pi/opc/samplepacks/cassette/"],
-		["SammyJams","/home/pi/opc/samplepacks/SammyJams Patches"]
-
-
-
+		["_josh",STORAGE_DIR+"/rpi_rp1/samplepacks/_josh/" ],
+		["courtyard",STORAGE_DIR+"/rpi_rp1/samplepacks/courtyard/" ],
+		["dawless",STORAGE_DIR+"/rpi_rp1/samplepacks/dawless/" ],
+		["C-MIX",STORAGE_DIR+"/rpi_rp1/samplepacks/C-MIX/" ],
+		["inkd",STORAGE_DIR+"/rpi_rp1/samplepacks/op1_3.2/inkdd/" ],
+		["Dark Energy",STORAGE_DIR+"/rpi_rp1/samplepacks/op1_3.2/Dark Energy/"],
+		["memories",STORAGE_DIR+"/rpi_rp1/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/memories/"],
+		["opines",STORAGE_DIR+"/rpi_rp1/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/opines/"],
+		["vanilla sun",STORAGE_DIR+"/rpi_rp1/samplepacks/vanilla sun/"],
+		["mellotron",STORAGE_DIR+"/rpi_rp1/samplepacks/mellotronAifs/"],
+		["hs dsynth",STORAGE_DIR+"/rpi_rp1/samplepacks/hs dsynth vol1/"],
+		["cassette",STORAGE_DIR+"/rpi_rp1/samplepacks/cassette/"],
+		["SammyJams",STORAGE_DIR+"/rpi_rp1/samplepacks/SammyJams Patches"],
 		]
 
 sampleListSynth=[["test","test"]]
 sampleListDrum=[["test","test"]]
 
 #List of tapes and paths
-tapeList=[
-		["recycling bin v1","/home/pi/Desktop/tapes/recycling bin v1/tape"],
-		["recycling bin v2","/home/pi/Desktop/tapes/recycling bin v2"],
-		["fun with sequencers","/home/pi/Desktop/op1-tapebackups/fun with sequencers"],
-		["lofi family","/home/pi/Desktop/op1-tapebackups/lofi family"],
-		["primarily pentatonic","/home/pi/Desktop/op1-tapebackups/primarily pentatonic"],
-		["2018-02-24","/home/pi/Desktop/op1-tapebackups/2018-02-24"],
-		["lets start with guitar","/home/pi/Desktop/op1-tapebackups/lets start with guitar this time"],
-		["spaceman","/home/pi/Desktop/op1-tapebackups/2018-03-25"],
-		["slow & somber","/home/pi/Desktop/op1-tapebackups/slow & somber"],
-		["cool solo","/home/pi/Desktop/op1-tapebackups/cool solo"],
-		["technical advantage","/home/pi/Desktop/op1-tapebackups/technical advantage"],
-		["heartbeat slide","/home/pi/Desktop/op1-tapebackups/heartbeat slide"]
+tapeList=[ 
+		["recycling bin v1",STORAGE_DIR+"tapes/recycling bin v1/tape"],
+		["recycling bin v2",STORAGE_DIR+"tapes/recycling bin v2"],
+		["fun with sequencers",STORAGE_DIR+"op1-tapebackups/fun with sequencers"],
+		["lofi family",STORAGE_DIR+"op1-tapebackups/lofi family"],
+		["primarily pentatonic",STORAGE_DIR+"op1-tapebackups/primarily pentatonic"],
+		["2018-02-24",STORAGE_DIR+"op1-tapebackups/2018-02-24"],
+		["lets start with guitar",STORAGE_DIR+"op1-tapebackups/lets start with guitar this time"],
+		["spaceman",STORAGE_DIR+"op1-tapebackups/2018-03-25"],
+		["slow & somber",STORAGE_DIR+"op1-tapebackups/slow & somber"],
+		["cool solo",STORAGE_DIR+"op1-tapebackups/cool solo"],
+		["technical advantage",STORAGE_DIR+"op1-tapebackups/technical advantage"],
+		["heartbeat slide",STORAGE_DIR+"op1-tapebackups/heartbeat slide"]
 
 		]
 #print tapeList
@@ -609,7 +606,7 @@ def backupTape(device):
 				#draw.text((0,20),"Backup tape?","white")
 				#Copy Operation
 				cdate=datetime.datetime.now()
-				dpath='/home/pi/opc/op1-tapebackups/'+str(datetime.date.today())+" "+cdate.strftime("%I:%M%p")
+				dpath='/home/pi/rpi_rp1/op1-tapebackups/'+str(datetime.date.today())+" "+cdate.strftime("%I:%M%p")
 				spath1=op1path+'/tape/track_1.aif'
 				spath2=op1path+'/tape/track_2.aif'
 				spath3=op1path+'/tape/track_3.aif'
@@ -835,7 +832,7 @@ def loadFirmware(device):
 			if GPIO.event_detected(key['key2']):
 				print "copying firmware"
 				drawText(device,["copying firmware..."])
-				spath="/home/pi/Desktop/misc/op1_225.op1"
+				spath=STORAGE_DIR+"misc/op1_225.op1"
 				dpath="/media/pi/OP-1/"
 				sh.copy(spath,dpath)
 				return
@@ -851,15 +848,15 @@ def loadFirmware(device):
 		return
 
 def scanTapes(device):
-	#directory="/home/pi/Desktop/op1-tapebackups/"
-	directory=homedir+"/op1-tapebackups/"
+	#directory=STORAGE_DIR+"op1-tapebackups/"
+	directory=HOME_DIR+"/op1-tapebackups/"
 
 	print
 	print "updating tape index"
 	
 	#tapelist=[
-	# 	["recycling bin v1","/home/pi/Desktop/tapes/recycling bin v1/tape"],
-	# 	["recycling bin v2","/home/pi/Desktop/tapes/recycling bin v2"]
+	# 	["recycling bin v1",STORAGE_DIR+"tapes/recycling bin v1/tape"],
+	# 	["recycling bin v2",STORAGE_DIR+"tapes/recycling bin v2"]
 	# 	]
 
 	for filename in os.listdir(directory):
@@ -904,7 +901,7 @@ def scanSamples(directory):
 	print
 	print "Scanning for samplepacks"
 
-	directory="/home/pi/opc/samplepacks/"
+	directory="/home/pi/rpi_rp1/samplepacks/"
 	for file in os.listdir(directory):
 		fullPath = directory + file
 		if os.path.isdir(fullPath):
