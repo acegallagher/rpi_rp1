@@ -10,28 +10,26 @@ from luma.oled.device           import sh1106
 from subprocess                 import *
 
 #GLOBALS
-lowBat=4
+lowBat      = 4
+VENDOR      = 0x2367
+PRODUCT     = 0x0002
+MOUNT_DIR   = "/media/op1"
+STORAGE_DIR = "/home/ace/" # dir where you checkout the git repo
+USBID_OP1   = "*Teenage_OP-1*"
 
-VENDOR = 0x2367
-PRODUCT = 0x0002
-MOUNT_DIR = "/media/op1"
-STORAGE_DIR = "/home/ace/"
-USBID_OP1 = "*Teenage_OP-1*"
-
-op1path=MOUNT_DIR
-
+OP1_PATH = MOUNT_DIR
 
 #KEYS
 key={}
-key['key1']=5 #broken on menona
-key['key2']=20
-key['key3']=16
+key['key1'] = 5 #broken on menona
+key['key2'] = 20
+key['key3'] = 16
 
-key['left']=5 
-key['up']=6
-key['press']=13
-key['down']=19
-key['right']=26
+key['left']  = 5 
+key['up']    = 6
+key['down']  = 19
+key['right'] = 26
+key['press'] = 13
 
 #LIST OF SAMPLE PACKS AND PATHS
 sampleListSynth=[
@@ -71,11 +69,9 @@ tapeList=[
 		]
 #print tapeList
 keys={}
-
 tapeList=[["test","test"]]
 
 # INITIALIZATION
-
 def init():
 
 	serial = spi(device=0, port=0)
@@ -92,43 +88,37 @@ def init():
 	drawSplash(device)
 	time.sleep(2)
 
-
-
-
 	return device
 
 def initgpio():
 
 	print "Initializing GPIO"
-	#Initialize GPIO
 	GPIO.setmode(GPIO.BCM)
-	
 
-	#GPIO.setup(key['key1'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['key1'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
 	GPIO.setup(key['key2'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
 	GPIO.setup(key['key3'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-	GPIO.setup(key['left'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
-	GPIO.setup(key['up'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['left'],  GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['up'],    GPIO.IN, pull_up_down=GPIO.PUD_UP)
 	GPIO.setup(key['press'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
-	GPIO.setup(key['down'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['down'],  GPIO.IN, pull_up_down=GPIO.PUD_UP)
 	GPIO.setup(key['right'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
 	
 	#LIPO LOW BATTERY
 	GPIO.setup(lowBat, GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
-	#GPIO.add_event_detect(key['key1'], GPIO.FALLING)
-	GPIO.add_event_detect(key['key2'], GPIO.FALLING,bouncetime=300)
-	GPIO.add_event_detect(key['key3'], GPIO.FALLING,bouncetime=300)
-	GPIO.add_event_detect(key['left'], GPIO.FALLING,bouncetime=300)
-	GPIO.add_event_detect(key['up'], GPIO.FALLING,bouncetime=300)
+	GPIO.add_event_detect(key['key1'],  GPIO.FALLING)
+	GPIO.add_event_detect(key['key2'],  GPIO.FALLING,bouncetime=300)
+	GPIO.add_event_detect(key['key3'],  GPIO.FALLING,bouncetime=300)
+	GPIO.add_event_detect(key['left'],  GPIO.FALLING,bouncetime=300)
+	GPIO.add_event_detect(key['up'],    GPIO.FALLING,bouncetime=300)
 	GPIO.add_event_detect(key['press'], GPIO.FALLING,bouncetime=300)
-	GPIO.add_event_detect(key['down'], GPIO.FALLING,bouncetime=300)
+	GPIO.add_event_detect(key['down'],  GPIO.FALLING,bouncetime=300)
 	GPIO.add_event_detect(key['right'], GPIO.FALLING,bouncetime=300)
 
 
 # SYSTEM UTILITIES
-
 def run_cmd(cmd):
 	p = Popen(cmd, shell=True, stdout=PIPE)
 	output = p.communicate()[0]
@@ -159,15 +149,11 @@ def forcedir(path):
     os.makedirs(path)
 
 # UI UTILITES
-
 def wait(keys,waitkey):
-
-	done=0
-	while done==0:
+	while True:
 		if GPIO.event_detected(key[waitkey]):
-			done=1
+                        return
 		time.sleep(.01)
-	return
 
 def actionhandler(device,pos,apos,mname,draw=0):
 
@@ -211,7 +197,7 @@ def actionhandler(device,pos,apos,mname,draw=0):
 		#if pos==1 or 2 or 3 or 4 or 5 or 6 or 7: 
 		#assuming pos is valid bc was built from sampleList
 		spath=sampleListSynth[pos-1][1]
-		dpath=op1path+"/synth/_" + str(sampleListSynth[pos-1][0]) + "/"
+		dpath=OP1_PATH+"/synth/_" + str(sampleListSynth[pos-1][0]) + "/"
 		if apos==1:
 			loadUnloadSample(device,spath,dpath,sampleListSynth[pos-1][0],"load")
 		elif apos==2:
@@ -222,7 +208,7 @@ def actionhandler(device,pos,apos,mname,draw=0):
 		#if pos==1 or 2 or 3 or 4 or 5 or 6 or 7: 
 		#assuming pos is valid bc was built from sampleList
 		spath=sampleListDrum[pos-1][1]
-		dpath=op1path+"/drum/_" + str(sampleListDrum[pos-1][0]) + "/"
+		dpath=OP1_PATH+"/drum/_" + str(sampleListDrum[pos-1][0]) + "/"
 		if apos==1:
 			loadUnloadSample(device,spath,dpath,sampleListDrum[pos-1][0],"load")
 		elif apos==2:
@@ -290,7 +276,7 @@ def actionhandler(device,pos,apos,mname,draw=0):
 
 		elif pos==6:
 			print 'deleting synth'
-			dpath=op1path+"/synth/"
+			dpath=OP1_PATH+"/synth/"
 			loadUnloadSample(device,"",dpath,"","delete")
 
 
@@ -575,7 +561,7 @@ def backupTape(device):
 		print(" > Device mounted at %s" % MOUNT_DIR)
 	print is_connected()
 
-	if os.path.exists(op1path)==1:
+	if os.path.exists(OP1_PATH)==1:
 
 		# with canvas(device) as draw:
 		# 	draw.text((0,0),"op1 connection success","white")
@@ -607,10 +593,10 @@ def backupTape(device):
 				#Copy Operation
 				cdate=datetime.datetime.now()
 				dpath=STORAGE_DIR+"/rpi_rp1/op1-tapebackups/"+str(datetime.date.today())+" "+cdate.strftime("%I:%M%p")
-				spath1=op1path+'/tape/track_1.aif'
-				spath2=op1path+'/tape/track_2.aif'
-				spath3=op1path+'/tape/track_3.aif'
-				spath4=op1path+'/tape/track_4.aif'
+				spath1=OP1_PATH+'/tape/track_1.aif'
+				spath2=OP1_PATH+'/tape/track_2.aif'
+				spath3=OP1_PATH+'/tape/track_3.aif'
+				spath4=OP1_PATH+'/tape/track_4.aif'
 
 
 				if os.path.exists(dpath)==0:
@@ -674,7 +660,7 @@ def loadTape(device,source):
 	print is_connected()
 
 
-	if os.path.exists(op1path)==1:
+	if os.path.exists(OP1_PATH)==1:
 		
 		print "op1 connection success"
 		print "Backup Track?"
@@ -696,7 +682,7 @@ def loadTape(device,source):
 				spath3=source+"/track_3.aif"
 				spath4=source+"/track_4.aif"
 
-				dpath=op1path+'/tape'
+				dpath=OP1_PATH+'/tape'
 
 
 				dpath1=dpath+'/track_1.aif'
@@ -778,7 +764,7 @@ def loadUnloadSample(device,spath,dpath,name,op):
 		mountdevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
 		print(" > Device mounted at %s" % MOUNT_DIR)
 
-	if os.path.exists(op1path)==1:
+	if os.path.exists(OP1_PATH)==1:
 		
 		print "op1 connection success"
 
