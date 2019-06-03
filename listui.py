@@ -1,4 +1,4 @@
-import time, os, datetime
+ximport time, os, datetime
 
 import RPi.GPIO as GPIO
 import shutil   as sh
@@ -606,7 +606,7 @@ def backupTape(device):
 				#draw.text((0,20),"Backup tape?","white")
 				#Copy Operation
 				cdate=datetime.datetime.now()
-				dpath='/home/pi/rpi_rp1/op1-tapebackups/'+str(datetime.date.today())+" "+cdate.strftime("%I:%M%p")
+				dpath=STORAGE_DIR+"/rpi_rp1/op1-tapebackups/"+str(datetime.date.today())+" "+cdate.strftime("%I:%M%p")
 				spath1=op1path+'/tape/track_1.aif'
 				spath2=op1path+'/tape/track_2.aif'
 				spath3=op1path+'/tape/track_3.aif'
