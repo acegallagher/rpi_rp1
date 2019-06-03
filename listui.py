@@ -848,7 +848,7 @@ def loadFirmware(device):
 		return
 
 def scanTapes(device):
-	directory=STORAGE_DIR+"op1-tapebackups/"
+	directory=STORAGE_DIR+"/rpi_rp1/op1-tapebackups/"
 	#directory=HOME_DIR+"/op1-tapebackups/"
 
 	print
