@@ -21,7 +21,7 @@ OP1_PATH = MOUNT_DIR
 
 #KEYS
 key={}
-key['key1'] = 5 #broken on menona
+key['key1'] = 12 #broken on menona, wrong key? makes no sense...
 key['key2'] = 20
 key['key3'] = 16
 
@@ -152,6 +152,7 @@ def forcedir(path):
 def wait(keys,waitkey):
 	while True:
 		if GPIO.event_detected(key[waitkey]):
+                        print waitkey
                         return
 		time.sleep(.01)
 
@@ -160,7 +161,6 @@ def actionhandler(device,pos,apos,mname,draw=0):
 	#returning 1 escapes calling function to return
 	print 'action handler @',mname
 	print "pos: ",pos,"apos" ,apos
-
 
 	if mname=="MAIN":
 		if pos==1 and apos==0:
@@ -640,10 +640,10 @@ def backupTape(device):
 		print "Is your device connected and in disk mode?"
 		print "  1-Return to Menu"
 		with canvas(device) as draw:
-			draw.text((0,10),"no op1 found","white")
-			draw.text((0,20),"1-return to menu","white")
+			draw.text((8,10),"no op1 found","white")
+			draw.text((4,20),"1-return to menu","white")
 		#term.println("  2-Menu")
-
+                
 		wait(keys,'key1')
 		return
 
