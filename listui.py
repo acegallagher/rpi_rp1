@@ -1,4 +1,4 @@
-ximport time, os, datetime
+import time, os, datetime
 
 import RPi.GPIO as GPIO
 import shutil   as sh
