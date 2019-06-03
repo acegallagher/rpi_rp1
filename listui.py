@@ -55,18 +55,18 @@ sampleListDrum=[["test","test"]]
 
 #List of tapes and paths
 tapeList=[ 
-		["recycling bin v1",STORAGE_DIR+"tapes/recycling bin v1/tape"],
-		["recycling bin v2",STORAGE_DIR+"tapes/recycling bin v2"],
-		["fun with sequencers",STORAGE_DIR+"op1-tapebackups/fun with sequencers"],
-		["lofi family",STORAGE_DIR+"op1-tapebackups/lofi family"],
-		["primarily pentatonic",STORAGE_DIR+"op1-tapebackups/primarily pentatonic"],
-		["2018-02-24",STORAGE_DIR+"op1-tapebackups/2018-02-24"],
-		["lets start with guitar",STORAGE_DIR+"op1-tapebackups/lets start with guitar this time"],
-		["spaceman",STORAGE_DIR+"op1-tapebackups/2018-03-25"],
-		["slow & somber",STORAGE_DIR+"op1-tapebackups/slow & somber"],
-		["cool solo",STORAGE_DIR+"op1-tapebackups/cool solo"],
-		["technical advantage",STORAGE_DIR+"op1-tapebackups/technical advantage"],
-		["heartbeat slide",STORAGE_DIR+"op1-tapebackups/heartbeat slide"]
+		["recycling bin v1",STORAGE_DIR+"/rpi_rp1/tapes/recycling bin v1/tape"],
+		["recycling bin v2",STORAGE_DIR+"/rpi_rp1/tapes/recycling bin v2"],
+		["fun with sequencers",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/fun with sequencers"],
+		["lofi family",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/lofi family"],
+		["primarily pentatonic",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/primarily pentatonic"],
+		["2018-02-24",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/2018-02-24"],
+		["lets start with guitar",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/lets start with guitar this time"],
+		["spaceman",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/2018-03-25"],
+		["slow & somber",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/slow & somber"],
+		["cool solo",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/cool solo"],
+		["technical advantage",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/technical advantage"],
+		["heartbeat slide",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/heartbeat slide"]
 
 		]
 #print tapeList
