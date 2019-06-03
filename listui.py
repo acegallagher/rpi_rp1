@@ -21,7 +21,7 @@ OP1_PATH = MOUNT_DIR
 
 #KEYS
 key={}
-key['key1'] = 12 #broken on menona, wrong key? makes no sense...
+key['key1'] = 21 #broken on menona, wrong key? makes no sense...
 key['key2'] = 20
 key['key3'] = 16
 
@@ -183,9 +183,8 @@ def actionhandler(device,pos,apos,mname,draw=0):
 		elif pos==5 and apos==0:
 			sysMenu(device)
 			#run_cmd("sudo python ui.py -i spi -d sh1106 -r 2 &")
-
-
 			return(1)
+
 	elif mname=="MAIN>TAPES":
 		print "tape actions @POS: ",pos,", apos: ",apos	
 
@@ -279,21 +278,15 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			dpath=OP1_PATH+"/synth/"
 			loadUnloadSample(device,"",dpath,"","delete")
 
-
-
 	return(0)
 
-
 # DISPLAY UTILITIES
-
 def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 	#mlist: menu list
 	#alist: action list
 	#mname: menu name for action context
 	title=mname
 	print mlist
-
-	#key definition MOVE TO GLOBAL
 
 	#initial settings
 	keys={}
@@ -304,14 +297,11 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 
 	if len(mlist)>5:
 		print "long list"
-		
 		vmax=len(mlist)-5
 
 	while True:
+		time.sleep(.05)
 		
-		#vlist=mlist[vpos:vpos+5]		
-
-
 		dispListMenu(device,title,mlist,alist,pos,0,vpos)
 		time.sleep(.05)
 
@@ -347,10 +337,8 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 
 
 			#action loop
-			
-			#done=0
 			while done==0:
-				
+
 				dispListMenu(device,title,mlist,alist,pos,apos,vpos)
 
 				if GPIO.event_detected(key['down']):
@@ -374,17 +362,10 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 					done=1
 					apos=0
 
-
 		#// EXIT STRATEGY
-		
-
-
 		elif GPIO.event_detected(key['key1']):
 			if exit==True:
-
 				return
-
-		time.sleep(.05)
 
 def dispListMenu(device,title,plist,alist,pos,apos=0,vpos=999):
 	
@@ -392,7 +373,6 @@ def dispListMenu(device,title,plist,alist,pos,apos=0,vpos=999):
 		mlist=plist[vpos:vpos+5]
 	else:
 		mlist=plist
-
 
 	#offsets
 	xdist=5 #x offset
@@ -411,8 +391,6 @@ def dispListMenu(device,title,plist,alist,pos,apos=0,vpos=999):
 	alistc=["white"]*len(alist)
 	if apos != 0:
 		alistc[apos-1]="black"
-
-
 
 	with canvas(device) as draw:
 
@@ -1194,7 +1172,6 @@ def switchBrack(data,fromdelim,todelim):
 
 
 # MAIN
-
 def main():
 	device=init()
 
@@ -1202,6 +1179,4 @@ def main():
 	mlist=["tape deck", "backup tape","sample packs","midi","system"]
 	alist=["synth", "drum"," "]
 	listMenuScroll(device,mlist,alist,"MAIN",None,True,False) #no exit
-
-
 main()
