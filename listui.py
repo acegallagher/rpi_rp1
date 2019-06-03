@@ -21,7 +21,7 @@ OP1_PATH = MOUNT_DIR
 
 #KEYS
 key={}
-key['key1'] = 21 #broken on menona, wrong key? makes no sense...
+key['key1'] = 21 
 key['key2'] = 20
 key['key3'] = 16
 
@@ -307,8 +307,8 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 
 		if GPIO.event_detected(key['down']):
 			#pos=pos+1
-			if pos==5 and vpos<vmax:
-				vpos+=1
+			if pos==5:
+				vpos=1
 			else:
 				pos=posDown(pos)
 				if pos==1:vpos=0
@@ -316,8 +316,8 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 
 		elif GPIO.event_detected(key['up']):
 			#pos=pos+1
-			if pos==1 and vpos>0:
-				vpos-=1
+			if pos==1:
+				vpos-=5
 			else:
 				pos=posUp(pos,5)
 				if pos==5:vpos=vmax
