@@ -15,7 +15,7 @@ lowBat=4
 VENDOR = 0x2367
 PRODUCT = 0x0002
 MOUNT_DIR = "/media/op1"
-HOME_DIR = "/home/ace/"
+STORAGE_DIR = "/home/ace/"
 USBID_OP1 = "*Teenage_OP-1*"
 
 op1path=MOUNT_DIR
@@ -848,8 +848,8 @@ def loadFirmware(device):
 		return
 
 def scanTapes(device):
-	#directory=STORAGE_DIR+"op1-tapebackups/"
-	directory=HOME_DIR+"/op1-tapebackups/"
+	directory=STORAGE_DIR+"op1-tapebackups/"
+	#directory=HOME_DIR+"/op1-tapebackups/"
 
 	print
 	print "updating tape index"
