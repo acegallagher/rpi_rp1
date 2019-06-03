@@ -901,7 +901,7 @@ def scanSamples(directory):
 	print
 	print "Scanning for samplepacks"
 
-	directory="/home/pi/rpi_rp1/samplepacks/"
+	directory=STORAGE_DIR+"rpi_rp1/samplepacks/"
 	for file in os.listdir(directory):
 		fullPath = directory + file
 		if os.path.isdir(fullPath):
