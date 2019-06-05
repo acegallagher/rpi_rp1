@@ -814,7 +814,7 @@ def scanTapes(device):
 	# 	['recycling bin v1',STORAGE_DIR+'tapes/recycling bin v1/tape'],
 	# 	['recycling bin v2',STORAGE_DIR+'tapes/recycling bin v2']
 	# 	]
-        lst = sorted([f for f in os.listdir(directory)], key=str.lower)
+        lst = sorted([f for f in os.listdir(directory) if not f.startswith('.')], key=str.lower)
 
 	for filename in lst:
 		#print filename
