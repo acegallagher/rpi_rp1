@@ -279,11 +279,11 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			print('deleting synth')
 			dpath=OP1_PATH+'/synth/'
 			loadUnloadSample(device,'',dpath,'','delete')
-
 	return(0)
 
 # DISPLAY UTILITIES
 def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
+
 	#mlist: menu list
 	#alist: action list
 	#mname: menu name for action context
@@ -814,8 +814,9 @@ def scanTapes(device):
 	# 	['recycling bin v1',STORAGE_DIR+'tapes/recycling bin v1/tape'],
 	# 	['recycling bin v2',STORAGE_DIR+'tapes/recycling bin v2']
 	# 	]
+        lst = sorted([f for f in os.listdir(directory)], key=str.lower)
 
-	for filename in os.listdir(directory):
+	for filename in lst:
 		#print filename
 		fullPath = directory + filename
 		tapeList.append([filename,fullPath])
@@ -824,7 +825,7 @@ def scanTapes(device):
 			sampleListSynth.remove(['test','test'])
 	tapeList.sort()
 
-	print('[TAPES]')
+	print('[TAPES]\n')
 	print(tapeList)
 
 
