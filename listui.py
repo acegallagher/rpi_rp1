@@ -1178,8 +1178,9 @@ def main():
                         for arg in args:
                                 print arg,
                                 print
-                        else:   
-                                v_print = lambda *a: None      # do-nothing function
+        else:   
+                v_print = lambda *a: None      # do-nothing function
+
         global verboseprint
         verboseprint = v_print
 
