@@ -1160,10 +1160,7 @@ def main():
         args = parser.parse_args()
         
         # print generic console messages only on --verbose flag 
-        if verbose:
-                v_print = print 
-        else:
-                v_print = lambda *a, **k: None 
+        v_print = print if args.verbose else lambda *a, **k: None
         global verboseprint
         verboseprint = v_print
 
