@@ -247,9 +247,9 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			drawText(device,["wlan0 status",ip])
 			wait({},"key3")
 		# 	term.println(ip)
-		elif pos==2: #reboot
-			drawText(device,['rebooting...'])
-			run_cmd("sudo reboot")
+		elif pos==2: # poweroff
+			drawText(device,['powering off...'])
+			run_cmd("sudo poweroff")
 			return
 
 		elif pos==3:
@@ -300,7 +300,7 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 		vmax=len(mlist)-5
 
 	while True:
-		time.sleep(.05)
+		time.sleep(.2)
 		
 		dispListMenu(device,title,mlist,alist,pos,0,vpos)
 		time.sleep(.05)
@@ -400,7 +400,6 @@ def dispListMenu(device,title,plist,alist,pos,apos=0,vpos=999):
 		draw.text((2,0),title,"black")
 
 		# // STATUS BAR //
-
 		if is_connected()==1:
 			draw.rectangle((116,2,124,10), outline="black", fill="black")
 		else:
@@ -410,9 +409,6 @@ def dispListMenu(device,title,plist,alist,pos,apos=0,vpos=999):
 		# 	draw.rectangle((96,3,108,9), outline="black", fill="black")
 		# else:
 		# 	draw.rectangle((96,3,108,9), outline="black", fill="white")
-
-
-
 
 		if pos != 0:
 			draw.rectangle((xdist, pos*10+yoffset, xdist+width, (pos*10)+10+yoffset), outline="white", fill="white")
@@ -515,7 +511,7 @@ def midiMenu(device):
 
 def sysMenu(device):
 	alist=["go", "[empty]","[empty]"]
-	mlist=["wireless","reboot","nest test","load firmware","progress test","delete synth","test7","asdf","asdfg","more tests"]
+	mlist=["wireless","poweroff","nest test","load firmware","progress test","delete synth","test7","asdf","asdfg","more tests"]
 
 	listMenuScroll(device,mlist,alist,"MAIN>SYS")
 
