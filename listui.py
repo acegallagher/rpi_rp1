@@ -9,7 +9,7 @@ from luma.core.interface.serial import spi
 from luma.core.render           import canvas
 from luma.oled.device           import sh1106
 from subprocess                 import *
-from __future__                 import print_function
+#from __future__                 import print_function
 
 #GLOBALS
 lowBat      = 4
@@ -74,15 +74,6 @@ tapeList=[
 keys={}
 tapeList=[["test","test"]]
 
-# print generic console messages only on --verbose flag 
-if verbose:
-    def verboseprint(*args):
-        # Print each argument separately so caller doesn't have to stuff everything into one string
-        for arg in args:
-           print arg,
-        print
-else:   
-    verboseprint = lambda *a: None      # do-nothing function
 
 # INITIALIZATION
 def init():
@@ -533,9 +524,7 @@ def nestMenu(device):
 	listMenuScroll(device,mlist,alist,"MAIN>SYS>NEST")
 
 
-
 # FILE OPERATIONS
-
 def backupTape(device):
 
 	if is_connected():
@@ -1031,7 +1020,6 @@ def readAif(path):
 	# type : sampler
 
 
-
 	attdata={}
 
 	with open(path,'rb') as fp:
@@ -1177,13 +1165,30 @@ def switchBrack(data,fromdelim,todelim):
 			#print newdata
 			return newdata
 
-
-# MAIN
 def main():
-	device=init()
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-v', '--verbosity', action="count", 
+                            help="increase output verbosity (e.g., -vv is more than -v)")
+        args = parser.parse_args()
+        
+        # print generic console messages only on --verbose flag 
+        if args.verbosity:
+                def v_print(*args):
+                        # Print each argument separately so caller doesn't have to stuff everything into one string
+                        for arg in args:
+                                print arg,
+                                print
+                        else:   
+                                v_print = lambda *a: None      # do-nothing function
+                                global verboseprint
+                                verboseprint = v_print
+        device=init()
 
-	#MAIN MENU
-	mlist=["tape deck", "backup tape","sample packs","midi","system"]
-	alist=["synth", "drum"," "]
-	listMenuScroll(device,mlist,alist,"MAIN",None,True,False) #no exit
-main()
+        #MAIN MENU
+        mlist=["tape deck", "backup tape","sample packs","midi","system"]
+        alist=["synth", "drum"," "]
+        listMenuScroll(device,mlist,alist,"MAIN",None,True,False) #no exit
+
+if __name__ == '__main__':
+        main()
+
