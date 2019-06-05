@@ -1,6 +1,5 @@
 import time, os, datetime, argparse
 
-
 import RPi.GPIO as GPIO
 import shutil   as sh
 import usb.core
@@ -9,16 +8,16 @@ from luma.core.interface.serial import spi
 from luma.core.render           import canvas
 from luma.oled.device           import sh1106
 from subprocess                 import *
-#from __future__                 import print_function
+from __future__                 import print_function
 
 #GLOBALS
 lowBat      = 4
 VENDOR      = 0x2367
 PRODUCT     = 0x0002
-MOUNT_DIR   = "/media/op1"
-STORAGE_DIR = "/home/ace/" # dir where you checkout the git repo
-PROJECT_DIR = "/rpi_rp1/"
-USBID_OP1   = "*Teenage_OP-1*"
+MOUNT_DIR   = '/media/op1'
+STORAGE_DIR = '/home/ace/' # dir where you checkout the git repo
+PROJECT_DIR = '/rpi_rp1/'
+USBID_OP1   = '*Teenage_OP-1*'
 
 OP1_PATH = MOUNT_DIR
 
@@ -36,43 +35,43 @@ key['press'] = 13
 
 #LIST OF SAMPLE PACKS AND PATHS
 sampleListSynth=[
-		["_josh",STORAGE_DIR+PROJECT_DIR+"/samplepacks/_josh/" ],
-		["courtyard",STORAGE_DIR+PROJECT_DIR+"/samplepacks/courtyard/" ],
-		["dawless",STORAGE_DIR+PROJECT_DIR+"/samplepacks/dawless/" ],
-		["C-MIX",STORAGE_DIR+PROJECT_DIR+"/samplepacks/C-MIX/" ],
-		["inkd",STORAGE_DIR+PROJECT_DIR+"/samplepacks/op1_3.2/inkdd/" ],
-		["Dark Energy",STORAGE_DIR+PROJECT_DIR+"/samplepacks/op1_3.2/Dark Energy/"],
-		["memories",STORAGE_DIR+PROJECT_DIR+"/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/memories/"],
-		["opines",STORAGE_DIR+PROJECT_DIR+"/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/opines/"],
-		["vanilla sun",STORAGE_DIR+PROJECT_DIR+"/samplepacks/vanilla sun/"],
-		["mellotron",STORAGE_DIR+PROJECT_DIR+"/samplepacks/mellotronAifs/"],
-		["hs dsynth",STORAGE_DIR+PROJECT_DIR+"/samplepacks/hs dsynth vol1/"],
-		["cassette",STORAGE_DIR+PROJECT_DIR+"/samplepacks/cassette/"],
-		["SammyJams",STORAGE_DIR+PROJECT_DIR+"/samplepacks/SammyJams Patches"],
+		['_josh',STORAGE_DIR+PROJECT_DIR+'/samplepacks/_josh/' ],
+		['courtyard',STORAGE_DIR+PROJECT_DIR+'/samplepacks/courtyard/' ],
+		['dawless',STORAGE_DIR+PROJECT_DIR+'/samplepacks/dawless/' ],
+		['C-MIX',STORAGE_DIR+PROJECT_DIR+'/samplepacks/C-MIX/' ],
+		['inkd',STORAGE_DIR+PROJECT_DIR+'/samplepacks/op1_3.2/inkdd/' ],
+		['Dark Energy',STORAGE_DIR+PROJECT_DIR+'/samplepacks/op1_3.2/Dark Energy/'],
+		['memories',STORAGE_DIR+PROJECT_DIR+'/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/memories/'],
+		['opines',STORAGE_DIR+PROJECT_DIR+'/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/opines/'],
+		['vanilla sun',STORAGE_DIR+PROJECT_DIR+'/samplepacks/vanilla sun/'],
+		['mellotron',STORAGE_DIR+PROJECT_DIR+'/samplepacks/mellotronAifs/'],
+		['hs dsynth',STORAGE_DIR+PROJECT_DIR+'/samplepacks/hs dsynth vol1/'],
+		['cassette',STORAGE_DIR+PROJECT_DIR+'/samplepacks/cassette/'],
+		['SammyJams',STORAGE_DIR+PROJECT_DIR+'/samplepacks/SammyJams Patches'],
 		]
 
-sampleListSynth=[["test","test"]]
-sampleListDrum=[["test","test"]]
+sampleListSynth=[['test','test']]
+sampleListDrum=[['test','test']]
 
 #List of tapes and paths
 tapeList=[ 
-		["recycling bin v1",STORAGE_DIR+PROJECT_DIR+"/tapes/recycling bin v1/tape"],
-		["recycling bin v2",STORAGE_DIR+PROJECT_DIR+"/tapes/recycling bin v2"],
-		["fun with sequencers",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/fun with sequencers"],
-		["lofi family",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/lofi family"],
-		["primarily pentatonic",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/primarily pentatonic"],
-		["2018-02-24",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/2018-02-24"],
-		["lets start with guitar",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/lets start with guitar this time"],
-		["spaceman",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/2018-03-25"],
-		["slow & somber",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/slow & somber"],
-		["cool solo",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/cool solo"],
-		["technical advantage",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/technical advantage"],
-		["heartbeat slide",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/heartbeat slide"]
+		['recycling bin v1',STORAGE_DIR+PROJECT_DIR+'/tapes/recycling bin v1/tape'],
+		['recycling bin v2',STORAGE_DIR+PROJECT_DIR+'/tapes/recycling bin v2'],
+		['fun with sequencers',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/fun with sequencers'],
+		['lofi family',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/lofi family'],
+		['primarily pentatonic',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/primarily pentatonic'],
+		['2018-02-24',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/2018-02-24'],
+		['lets start with guitar',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/lets start with guitar this time'],
+		['spaceman',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/2018-03-25'],
+		['slow & somber',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/slow & somber'],
+		['cool solo',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/cool solo'],
+		['technical advantage',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/technical advantage'],
+		['heartbeat slide',STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/heartbeat slide']
 
 		]
 #print tapeList
 keys={}
-tapeList=[["test","test"]]
+tapeList=[['test','test']]
 
 
 # INITIALIZATION
@@ -82,11 +81,11 @@ def init():
 	device = sh1106(serial,rotate=2)
 	drawText(device,['Initializing GPIO'])
 	initgpio()
-	drawText(device,['Initializing GPIO',"Scanning Tapes"])
+	drawText(device,['Initializing GPIO','Scanning Tapes'])
 	scanTapes(device)
-	drawText(device,['Initializing GPIO',"Scanning Tapes","Scanning Samples"])
-	scanSamples("dummy")
-	drawText(device,['Initializing GPIO',"Scanning Tapes","Scanning Samples","done."])
+	drawText(device,['Initializing GPIO','Scanning Tapes','Scanning Samples'])
+	scanSamples('dummy')
+	drawText(device,['Initializing GPIO','Scanning Tapes','Scanning Samples','done.'])
 	drawSplash(device)
 	time.sleep(2)
 
@@ -94,7 +93,7 @@ def init():
 
 def initgpio():
 
-	verboseprint("Initializing GPIO")
+	verboseprint('Initializing GPIO')
 	GPIO.setmode(GPIO.BCM)
 
 	GPIO.setup(key['key1'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -132,19 +131,19 @@ def is_connected():
 def getmountpath():
   o = os.popen('readlink -f /dev/disk/by-id/' + USBID_OP1).read()
   if USBID_OP1 in o:
-    raise RuntimeError("Error getting OP-1 mount path: {}".format(o))
+    raise RuntimeError('Error getting OP-1 mount path: {}'.format(o))
   else:
     return o.rstrip()
 
 def mountdevice(source, target, fs, options=''):
   ret = os.system('mount {} {}'.format(source, target))
   if ret not in (0, 8192):
-    raise RuntimeError("Error mounting {} on {}: {}".format(source, target, ret))
+    raise RuntimeError('Error mounting {} on {}: {}'.format(source, target, ret))
 
 def unmountdevice(target):
   ret = os.system('umount {}'.format(target))
   if ret != 0:
-    raise RuntimeError("Error unmounting {}: {}".format(target, ret))
+    raise RuntimeError('Error unmounting {}: {}'.format(target, ret))
 
 def forcedir(path):
   if not os.path.isdir(path):
@@ -154,19 +153,19 @@ def forcedir(path):
 def wait(keys,waitkey):
 	while True:
 		if GPIO.event_detected(key[waitkey]):
-                        print waitkey
+                        print(waitkey)
                         return
 		time.sleep(.01)
 
 def actionhandler(device,pos,apos,mname,draw=0):
 
 	#returning 1 escapes calling function to return
-	print 'action handler @',mname
-	print "pos: ",pos,"apos" ,apos
+	print('action handler @%s' % mname)
+	print('pos: %s apos: %s' pos,apos)
 
-	if mname=="MAIN":
+	if mname=='MAIN':
 		if pos==1 and apos==0:
-			print 'main: tape menu'
+			print('main: tape menu')
 			#MAIN MENU
 			tapeMenu(device)
 			return(1)
@@ -184,101 +183,100 @@ def actionhandler(device,pos,apos,mname,draw=0):
 
 		elif pos==5 and apos==0:
 			sysMenu(device)
-			#run_cmd("sudo python ui.py -i spi -d sh1106 -r 2 &")
+			#run_cmd('sudo python ui.py -i spi -d sh1106 -r 2 &')
 			return(1)
 
-	elif mname=="MAIN>TAPES":
-		print "tape actions @POS: ",pos,", apos: ",apos	
+	elif mname=='MAIN>TAPES':
+		print('tape actions @POS: %s, apos: %s' % pos,apos)
 
 		if apos==1: #assuming pos is valid becasue menuList was built from tapeList
 			loadTape(device,tapeList[pos-1][1])
 
-	elif mname=="MAIN>SYNTH SAMPLES":	
+	elif mname=='MAIN>SYNTH SAMPLES':	
 		
 		#if pos==1 or 2 or 3 or 4 or 5 or 6 or 7: 
 		#assuming pos is valid bc was built from sampleList
 		spath=sampleListSynth[pos-1][1]
-		dpath=OP1_PATH+"/synth/_" + str(sampleListSynth[pos-1][0]) + "/"
+		dpath=OP1_PATH+'/synth/_' + str(sampleListSynth[pos-1][0]) + '/'
 		if apos==1:
-			loadUnloadSample(device,spath,dpath,sampleListSynth[pos-1][0],"load")
+			loadUnloadSample(device,spath,dpath,sampleListSynth[pos-1][0],'load')
 		elif apos==2:
-			loadUnloadSample(device,spath,dpath,sampleListSynth[pos-1][0],"delete")
+			loadUnloadSample(device,spath,dpath,sampleListSynth[pos-1][0],'delete')
 
-	elif mname=="MAIN>DRUM SAMPLES":	
+	elif mname=='MAIN>DRUM SAMPLES':	
 		
 		#if pos==1 or 2 or 3 or 4 or 5 or 6 or 7: 
 		#assuming pos is valid bc was built from sampleList
 		spath=sampleListDrum[pos-1][1]
-		dpath=OP1_PATH+"/drum/_" + str(sampleListDrum[pos-1][0]) + "/"
+		dpath=OP1_PATH+'/drum/_' + str(sampleListDrum[pos-1][0]) + '/'
 		if apos==1:
-			loadUnloadSample(device,spath,dpath,sampleListDrum[pos-1][0],"load")
+			loadUnloadSample(device,spath,dpath,sampleListDrum[pos-1][0],'load')
 		elif apos==2:
-			loadUnloadSample(device,spath,dpath,sampleListDrum[pos-1][0],"delete")
+			loadUnloadSample(device,spath,dpath,sampleListDrum[pos-1][0],'delete')
 
-	elif mname=="MAIN>MIDI":
-		print "midi actions"
+	elif mname=='MAIN>MIDI':
+		print('midi actions')
 		if pos==1:
-			midiSrc="14"
-			midiDst="20"
+			midiSrc='14'
+			midiDst='20'
 		elif pos==2:
-			midiSrc="20"
-			midiDst="14"
+			midiSrc='20'
+			midiDst='14'
 		elif pos==3:
-			midiSrc="20"
-			midiDst="24"
+			midiSrc='20'
+			midiDst='24'
 		elif pos==4:
-			midiSrc="24"
-			midiDst="20"
+			midiSrc='24'
+			midiDst='20'
 
 
-		out=run_cmd('sudo aconnect '+midiSrc+" "+midiDst)
-		drawText(device,[out,"done"])
+		out=run_cmd('sudo aconnect '+midiSrc+' '+midiDst)
+		drawText(device,[out,'done'])
 		time.sleep(1)
 
-	elif mname=="MAIN>SYS":
+	elif mname=='MAIN>SYS':
 
 		if pos==1:
-			
-			getip="ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}'"# -d$'\\n' -f1"
+			getip='ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}''# -d$'\\n' -f1'
 			netstat=run_cmd(getip)
 			ip=netstat.split('\n')[0]
 
-			print("wlan0 status")
-			print ip
+			print('wlan0 status')
+			print(ip)
 
-			drawText(device,["wlan0 status",ip])
-			wait({},"key3")
+			drawText(device,['wlan0 status',ip])
+			wait({},'key3')
 		# 	term.println(ip)
 		elif pos==2: # poweroff
 			drawText(device,['powering off...'])
-			run_cmd("sudo poweroff")
+			run_cmd('sudo poweroff')
 			return
 
 		elif pos==3:
-			print 'nestTest'
+			print('nestTest')
 			nestMenu(device)
 
 		elif pos==4:
-			print 'loading firmware'
+			print('loading firmware')
 			loadFirmware(device)
 
 		elif pos==5:
-			print 'testing progress'
-			drawProgress(device,"progress!",0)
+			print('testing progress')
+			drawProgress(device,'progress!',0)
 			time.sleep(2)
-			drawProgress(device,"progress!",.25)
+			drawProgress(device,'progress!',.25)
 			time.sleep(2)
-			drawProgress(device,"progress!",.5)
+			drawProgress(device,'progress!',.5)
 			time.sleep(2)
-			drawProgress(device,"progress!",.75)
+			drawProgress(device,'progress!',.75)
 			time.sleep(2)
-			drawProgress(device,"progress!",1)
+			drawProgress(device,'progress!',1)
 			time.sleep(2)
 
 		elif pos==6:
-			print 'deleting synth'
-			dpath=OP1_PATH+"/synth/"
-			loadUnloadSample(device,"",dpath,"","delete")
+			print('deleting synth')
+			dpath=OP1_PATH+'/synth/'
+			loadUnloadSample(device,'',dpath,'','delete')
 
 	return(0)
 
@@ -288,7 +286,7 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 	#alist: action list
 	#mname: menu name for action context
 	title=mname
-	print mlist
+	print(mlist)
 
 	#initial settings
 	keys={}
@@ -298,7 +296,7 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 	vmax=0
 
 	if len(mlist)>5:
-		print "long list"
+		print('long list')
 		vmax=len(mlist)-5
 
 	while True:
@@ -382,52 +380,52 @@ def dispListMenu(device,title,plist,alist,pos,apos=0,vpos=999):
 	
 	#menu
 	width=100 #width of hilight
-	#mlist=["list1", "list2","list3","list4","list5"] #will be parameter
-	mlistc=["white"]*len(mlist)
+	#mlist=['list1', 'list2','list3','list4','list5'] #will be parameter
+	mlistc=['white']*len(mlist)
 	if pos != 0: #setup cursor
-		mlistc[pos-1]="black"
+		mlistc[pos-1]='black'
 
 	#action menu
 	axdist=64
-	#alist=["action1", "action2","action3"]
-	alistc=["white"]*len(alist)
+	#alist=['action1', 'action2','action3']
+	alistc=['white']*len(alist)
 	if apos != 0:
-		alistc[apos-1]="black"
+		alistc[apos-1]='black'
 
 	with canvas(device) as draw:
 
 		#draw title
-		draw.rectangle((0,0,128,12), outline="white", fill="white")
-		#draw.rectangle((1,10,126,11), outline="black", fill="black")
-		draw.text((2,0),title,"black")
+		draw.rectangle((0,0,128,12), outline='white', fill='white')
+		#draw.rectangle((1,10,126,11), outline='black', fill='black')
+		draw.text((2,0),title,'black')
 
 		# // STATUS BAR //
 		if is_connected()==1:
-			draw.rectangle((116,2,124,10), outline="black", fill="black")
+			draw.rectangle((116,2,124,10), outline='black', fill='black')
 		else:
-			draw.rectangle((116,2,124,10), outline="black", fill="white")
+			draw.rectangle((116,2,124,10), outline='black', fill='white')
 
 		# if GPIO.event_detected(lowBat):
-		# 	draw.rectangle((96,3,108,9), outline="black", fill="black")
+		# 	draw.rectangle((96,3,108,9), outline='black', fill='black')
 		# else:
-		# 	draw.rectangle((96,3,108,9), outline="black", fill="white")
+		# 	draw.rectangle((96,3,108,9), outline='black', fill='white')
 
 		if pos != 0:
-			draw.rectangle((xdist, pos*10+yoffset, xdist+width, (pos*10)+10+yoffset), outline="white", fill="white")
+			draw.rectangle((xdist, pos*10+yoffset, xdist+width, (pos*10)+10+yoffset), outline='white', fill='white')
 		
 		for idx,line in enumerate(mlist):
-			#print("idx: ",idx,"line: ",line,"fill: ",flist[idx])
+			#print('idx: ',idx,'line: ',line,'fill: ',flist[idx])
 			draw.text((xdist,(idx+1)*10+yoffset),line,mlistc[idx])
 
 		if apos != 0:
 
-			draw.rectangle((60,13,128,64), outline="black", fill="black")
-			draw.rectangle((60,13,61,48), outline="white", fill="white")
+			draw.rectangle((60,13,128,64), outline='black', fill='black')
+			draw.rectangle((60,13,61,48), outline='white', fill='white')
 
-			draw.rectangle((axdist, apos*10+yoffset, axdist+width, (apos*10)+10+yoffset), outline="white", fill="white")
+			draw.rectangle((axdist, apos*10+yoffset, axdist+width, (apos*10)+10+yoffset), outline='white', fill='white')
 		
 			for idx,line in enumerate(alist):
-				#print("idx: ",idx,"line: ",line,"fill: ",flist[idx])
+				#print('idx: ',idx,'line: ',line,'fill: ',flist[idx])
 				draw.text((axdist,(idx+1)*10+yoffset),line,alistc[idx])
 
 def posUp(pos,lmax=5):
@@ -447,53 +445,53 @@ def posDown(pos,lmax=5):
 def drawText(device,textlist):
 	with canvas(device) as draw:
 		for idx,text in enumerate(textlist):
-			#print text, ", ", idx
-			draw.text((0,idx*10),text,"white")
+			#print text, ', ', idx
+			draw.text((0,idx*10),text,'white')
 
 def drawProgress(device,title,progress):
 	with canvas(device) as draw:
 		progpix=progress*64
-		draw.text((16,8),title,"white")
-		draw.rectangle((32,32,96,42), outline="white", fill="black")
-		draw.rectangle((32,32,32+progpix,42), outline="white", fill="white")
+		draw.text((16,8),title,'white')
+		draw.rectangle((32,32,96,42), outline='white', fill='black')
+		draw.rectangle((32,32,32+progpix,42), outline='white', fill='white')
 
 def drawSplash(device):
 	with canvas(device) as draw:
-		draw.rectangle((18,12,108,52), outline="white", fill="black")
-		draw.text((0,16),'         OPC         ',"white")
-		draw.text((0,38),'     tink3rtanker    ',"white")
+		draw.rectangle((18,12,108,52), outline='white', fill='black')
+		draw.text((0,16),'         OPC         ','white')
+		draw.text((0,38),'     tink3rtanker    ','white')
 
 # MENUS
 
 def sampleMenuSynth(device):
-	#mlist=["josh", "courtyard","dawless","cmix","inkd","Dark Energy","memories","opines"]
+	#mlist=['josh', 'courtyard','dawless','cmix','inkd','Dark Energy','memories','opines']
 	mlist=[]
 	for item in sampleListSynth: #build menu list from sampleList global
-		print item
+		print(item)
 		mlist.append(item[0])
 
-	alist=["load", "unload","[empty]"]
-	listMenuScroll(device,mlist,alist,"MAIN>SYNTH SAMPLES",None,True)
+	alist=['load', 'unload','[empty]']
+	listMenuScroll(device,mlist,alist,'MAIN>SYNTH SAMPLES',None,True)
 
 def sampleMenuDrum(device):
-	#mlist=["josh", "courtyard","dawless","cmix","inkd","Dark Energy","memories","opines"]
+	#mlist=['josh', 'courtyard','dawless','cmix','inkd','Dark Energy','memories','opines']
 	mlist=[]
 	for item in sampleListDrum: #build menu list from sampleList global
-		print item
+		print(item)
 		mlist.append(item[0])
 
-	alist=["load", "unload","[empty]"]
-	listMenuScroll(device,mlist,alist,"MAIN>DRUM SAMPLES",None,True)	
+	alist=['load', 'unload','[empty]']
+	listMenuScroll(device,mlist,alist,'MAIN>DRUM SAMPLES',None,True)	
 
 def tapeMenu(device):
-	#print "building menu list"
+	#print 'building menu list'
 	mlist=[]
 	for item in tapeList: #build menu list from tapeList global
 		mlist.append(item[0])
-	#mlist=["recycling bin v1", "recycling bin v2","primarily pentatonic","2018-02-24","lets start with guitar this time","spaceman"]
+	#mlist=['recycling bin v1', 'recycling bin v2','primarily pentatonic','2018-02-24','lets start with guitar this time','spaceman']
 	
-	alist=["load", "[empty]","[empty]"]
-	listMenuScroll(device,mlist,alist,"MAIN>TAPES",None,True)
+	alist=['load', '[empty]','[empty]']
+	listMenuScroll(device,mlist,alist,'MAIN>TAPES',None,True)
 
 	if ['test', 'test'] in tapeList: 
 		tapeList.remove(['test','test'])
@@ -503,25 +501,25 @@ def midiMenu(device):
 	output = run_cmd('sudo aconnect -i -o')
 	outlines=output.splitlines()
 	drawText(device,outlines)
-	wait({},"key2")
+	wait({},'key2')
 	time.sleep(1)
 
 
-	mlist=["14:20", "20:14","20:24","24:20"]
-	alist=["go", "[empty]","[empty]"]
-	listMenuScroll(device,mlist,alist,"MAIN>MIDI")
+	mlist=['14:20', '20:14','20:24','24:20']
+	alist=['go', '[empty]','[empty]']
+	listMenuScroll(device,mlist,alist,'MAIN>MIDI')
 
 def sysMenu(device):
-	alist=["go", "[empty]","[empty]"]
-	mlist=["wireless","poweroff","nest test","load firmware","progress test","delete synth","test7","asdf","asdfg","more tests"]
+	alist=['go', '[empty]','[empty]']
+	mlist=['wireless','poweroff','nest test','load firmware','progress test','delete synth','test7','asdf','asdfg','more tests']
 
-	listMenuScroll(device,mlist,alist,"MAIN>SYS")
+	listMenuScroll(device,mlist,alist,'MAIN>SYS')
 
 def nestMenu(device):
-	alist=["[empty]", "[empty]","[empty]"]
-	mlist=["nest test!","test5d","test6","test7","asdf","asdfg","more tests"]
+	alist=['[empty]', '[empty]','[empty]']
+	mlist=['nest test!','test5d','test6','test7','asdf','asdfg','more tests']
 
-	listMenuScroll(device,mlist,alist,"MAIN>SYS>NEST")
+	listMenuScroll(device,mlist,alist,'MAIN>SYS>NEST')
 
 
 # FILE OPERATIONS
@@ -530,30 +528,30 @@ def backupTape(device):
 	if is_connected():
 		forcedir(MOUNT_DIR)
 		mountpath = getmountpath()
-		print(" > OP-1 device path: %s" % mountpath)
+		print(' > OP-1 device path: %s', mountpath)
 		mountdevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
-		print(" > Device mounted at %s" % MOUNT_DIR)
-	print is_connected()
+		print(' > Device mounted at %s' % MOUNT_DIR)
+	print(is_connected())
 
 	if os.path.exists(OP1_PATH)==1:
 
 		# with canvas(device) as draw:
-		# 	draw.text((0,0),"op1 connection success","white")
-		# 	draw.text((0,10),"backup track?","white")
-		# 	draw.text((0,20),"1-back","white")
-		# 	draw.text((0,30),"2-yes","white")
+		# 	draw.text((0,0),'op1 connection success','white')
+		# 	draw.text((0,10),'backup track?','white')
+		# 	draw.text((0,20),'1-back','white')
+		# 	draw.text((0,30),'2-yes','white')
 		
 		# time.sleep(1)
-		drawText(device,["op1 connection success","backup tape?"," -yup"," -back"])
+		drawText(device,['op1 connection success','backup tape?',' -yup',' -back'])
 
 			# 			# sh.copy(spath4,dpath)
-			# draw.text((0,40),"Track 4 copied","white")
+			# draw.text((0,40),'Track 4 copied','white')
 
 
-		print "op1 connection success"
-		print "Backup Track?"
-		print "  1-back"
-		print "  2-continue"
+		print('op1 connect success')
+		print('Backup Track?')
+		print('  1-back')
+		print('  2-continue')
 
 
 
@@ -561,12 +559,12 @@ def backupTape(device):
 		#response loop
 		while True:
 			if GPIO.event_detected(key['key2']):
-				print "copying"
-				#draw.text((0,10),"copying","white")
-				#draw.text((0,20),"Backup tape?","white")
+				print('copying')
+				#draw.text((0,10),'copying','white')
+				#draw.text((0,20),'Backup tape?','white')
 				#Copy Operation
 				cdate=datetime.datetime.now()
-				dpath=STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/"+str(datetime.date.today())+" "+cdate.strftime("%I:%M%p")
+				dpath=STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/'+str(datetime.date.today())+' '+cdate.strftime('%I:%M%p')
 				spath1=OP1_PATH+'/tape/track_1.aif'
 				spath2=OP1_PATH+'/tape/track_2.aif'
 				spath3=OP1_PATH+'/tape/track_3.aif'
@@ -581,27 +579,27 @@ def backupTape(device):
 				# 	time.sleep(.5)
 				# 	return   					can't check this now. assuming source directory is real
 
-				drawProgress(device,"backing up tape...",0)
+				drawProgress(device,'backing up tape...',0)
 
 				sh.copy(spath1,dpath)
-				print 'Track 1 Copied'
-				drawProgress(device,"backing up tape...",.2)
+				print('Track 1 Copied')
+				drawProgress(device,'backing up tape...',.2)
 
 				sh.copy(spath2,dpath)
-				print 'Track 2 Copied'
-				drawProgress(device,"backing up tape...",.4)
+				print('Track 2 Copied')
+				drawProgress(device,'backing up tape...',.4)
 
 				sh.copy(spath3,dpath)
-				print 'Track 3 Copied'
-				drawProgress(device,"backing up tape...",.6)
+				print('Track 3 Copied')
+				drawProgress(device,'backing up tape...',.6)
 
 				sh.copy(spath4,dpath)
-				print 'Track 4 Copied'
-				drawProgress(device,"backing up tape...",.8)
+				print('Track 4 Copied')
+				drawProgress(device,'backing up tape...',.8)
 
-				print(" > Unmounting OP-1")
+				print(' > Unmounting OP-1')
 				unmountdevice(MOUNT_DIR)
-				print(" > Done.")
+				print(' > Done.')
 				drawProgress(device,'backing up tape...',1)
 				time.sleep(.5)
 
@@ -610,13 +608,13 @@ def backupTape(device):
 			elif GPIO.event_detected(key['key1']):
 				return
 	else:
-		print "no op1 detcted"
-		print "Is your device connected and in disk mode?"
-		print "  1-Return to Menu"
+		print('no op1 detcted')
+		print('Is your device connected and in disk mode?')
+		print('  1-Return to Menu')
 		with canvas(device) as draw:
-			draw.text((8,10),"no op1 found","white")
-			draw.text((4,20),"1-return to menu","white")
-		#term.println("  2-Menu")
+			draw.text((8,10),'no op1 found','white')
+			draw.text((4,20),'1-return to menu','white')
+		#term.println('  2-Menu')
                 
 		wait(keys,'key1')
 		return
@@ -628,33 +626,33 @@ def loadTape(device,source):
 	if is_connected():
 		forcedir(MOUNT_DIR)
 		mountpath = getmountpath()
-		print(" > OP-1 device path: %s" % mountpath)
+		print(' > OP-1 device path: %s' % mountpath)
 		mountdevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
-		print(" > Device mounted at %s" % MOUNT_DIR)
-	print is_connected()
+		print(' > Device mounted at %s' % MOUNT_DIR)
+	print(is_connected())
 
 
 	if os.path.exists(OP1_PATH)==1:
 		
-		print "op1 connection success"
-		print "Backup Track?"
-		print "  1-Yes"
-		print "  2-No"
+		print('op1 connection success')
+		print('Backup Track?')
+		print('  1-Yes')
+		print('  2-No')
 
-		drawText(device,["op1 connection success","load tape?"," 1- back","2-yes"])
+		drawText(device,['op1 connection success','load tape?',' 1- back','2-yes'])
 
 
 		#response loop
 		while True:
 			if GPIO.event_detected(key['key2']):
-				print "copying"
+				print('copying')
 
 
 				#Copy Operation
-				spath1=source+"/track_1.aif"
-				spath2=source+"/track_2.aif"
-				spath3=source+"/track_3.aif"
-				spath4=source+"/track_4.aif"
+				spath1=source+'/track_1.aif'
+				spath2=source+'/track_2.aif'
+				spath3=source+'/track_3.aif'
+				spath4=source+'/track_4.aif'
 
 				dpath=OP1_PATH+'/tape'
 
@@ -679,29 +677,29 @@ def loadTape(device,source):
 				# can't check this now. assuming source directory is real
 
 
-				#drawText(device,["copying..."])
+				#drawText(device,['copying...'])
 				drawProgress(device,'copying tape...',0)
 
 				sh.copy(spath1,dpath)
-				print 'Track 1 Copied'
+				print('Track 1 Copied')
 				drawProgress(device,'copying tape...',.2)
 
 				sh.copy(spath2,dpath)
-				print 'Track 2 Copied'
+				print('Track 2 Copied')
 				drawProgress(device,'copying tape...',.4)
 
 				sh.copy(spath3,dpath)
-				print 'Track 3 Copied'
+				print('Track 3 Copied')
 				drawProgress(device,'copying tape...',.6)
 
 				sh.copy(spath4,dpath)
-				print 'Track 4 Copied'
+				print('Track 4 Copied')
 				drawProgress(device,'copying tape...',.8)
 
 
-				print(" > Unmounting OP-1")
+				print(' > Unmounting OP-1')
 				unmountdevice(MOUNT_DIR)
-				print(" > Done.")
+				print(' > Done.')
 				drawProgress(device,'copying tape...',1)
 				time.sleep(.5)
 				return
@@ -709,12 +707,12 @@ def loadTape(device,source):
 			elif GPIO.event_detected(key['key1']):
 				return
 	else:
-		print "no op1 detcted"
-		print "Is your device connected and in disk mode?"
-		print "  1-Return to Menu"
+		print('no op1 detcted')
+		print('Is your device connected and in disk mode?')
+		print('  1-Return to Menu')
 
-		drawText(device,["no op1 found","1-return to menu"])
-		#term.println("  2-Menu")
+		drawText(device,['no op1 found','1-return to menu'])
+		#term.println('  2-Menu')
 
 		wait(keys,'key1')
 		return
@@ -723,77 +721,74 @@ def loadUnloadSample(device,spath,dpath,name,op):
 	keys={}
 	time.sleep(1)
 
-	#op: "load"-load to op1	"del"-delete from op1
+	#op: 'load'-load to op1	'del'-delete from op1
 
 	# term.clear()
-	# term.println("Load/Unload?")
-	# term.println("  1-load")
-	# term.println("  2-unload")
-	# term.println("  3-back")
+	# term.println('Load/Unload?')
+	# term.println('  1-load')
+	# term.println('  2-unload')
+	# term.println('  3-back')
 	# drawText([])
 	if is_connected():
 		forcedir(MOUNT_DIR)
 		mountpath = getmountpath()
-		print(" > OP-1 device path: %s" % mountpath)
+		print(' > OP-1 device path: %s' % mountpath)
 		mountdevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
-		print(" > Device mounted at %s" % MOUNT_DIR)
+		print(' > Device mounted at %s' % MOUNT_DIR)
 
 	if os.path.exists(OP1_PATH)==1:
 		
-		print "op1 connection success"
+		print('op1 connection success')
 
 
-		drawText(device,["op1 connection success","you sure?","1-back","2-yes"])
+		drawText(device,['op1 connection success','you sure?','1-back','2-yes'])
 
 
 		while True:
 			if GPIO.event_detected(key['key2']):
-				print "copying"
+				print('copying')
 
-				
-
-				
-				print spath,">",dpath
+				print('%s >%s' % dpath,spath)
 						
-				if op=="load":
-					print "copying"
+				if op=='load':
+					print('copying')
 					copytree(spath,dpath)
-					print(" > Unmounting OP-1")
+					print(' > Unmounting OP-1')
 					unmountdevice(MOUNT_DIR)
-					print(" > Done.")
+					print(' > Done.')
 					return
 					
-				elif op=="delete":
+				elif op=='delete':
 					#sampleLoadMenu(term,keys)
 					sh.rmtree(dpath)
-					print name+' pack deleted'
-					print(" > Unmounting OP-1")
+					print('%s pack deleted' %  name)
+					print(' > Unmounting OP-1')
 					unmountdevice(MOUNT_DIR)
-					print(" > Done.")
+					print(' > Done.')
 					return
 
 
 			elif GPIO.event_detected(key['key1']):
 				return
 	else:
-		print "no op1 detcted"
-		print "Is your device connected and in disk mode?"
-		print "  1-Return to Menu"
+		print('no op1 detcted')
+		print('Is your device connected and in disk mode?')
+		print('  1-Return to Menu')
 
-		drawText(device,["no op1 found","1-return to menu"])
-		#term.println("  2-Menu")
+		drawText(device,['no op1 found','1-return to menu'])
+		#term.println('  2-Menu')
 
 		wait(keys,'key1')
 
 def loadFirmware(device):
-	if os.path.exists("/media/pi/OP-1")==1:
-		drawText(device,["op1 connection success","load firmware?"," -yup"," -back"])
+	if os.path.exists('/media/pi/OP-1')==1:
+		drawText(device,['op1 connection success','load firmware?',' -yup',' -back'])
 		while True:
 			if GPIO.event_detected(key['key2']):
-				print "copying firmware"
-				drawText(device,["copying firmware..."])
-				spath=STORAGE_DIR+"misc/op1_225.op1"
-				dpath="/media/pi/OP-1/"
+				print('copying firmware')
+				drawText(device,['copying firmware...'])
+				spath=STORAGE_DIR+'misc/op1_225.op1'
+				dpath='/media/pi/OP-1/'
 				sh.copy(spath,dpath)
 				return
 
@@ -803,122 +798,115 @@ def loadFirmware(device):
 
 
 	else:
-		drawText(device,["op1 not detected","","returning to menu..."])
+		drawText(device,['op1 not detected','','returning to menu...'])
 		time.sleep(1)
 		return
 
 def scanTapes(device):
-	directory=STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/"
-	#directory=HOME_DIR+"/op1-tapebackups/"
+	directory=STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/'
+	#directory=HOME_DIR+'/op1-tapebackups/'
 
-	print
-	print "updating tape index"
+	print('updating tape index')
 	
 	#tapelist=[
-	# 	["recycling bin v1",STORAGE_DIR+"tapes/recycling bin v1/tape"],
-	# 	["recycling bin v2",STORAGE_DIR+"tapes/recycling bin v2"]
+	# 	['recycling bin v1',STORAGE_DIR+'tapes/recycling bin v1/tape'],
+	# 	['recycling bin v2',STORAGE_DIR+'tapes/recycling bin v2']
 	# 	]
 
 	for filename in os.listdir(directory):
 		#print filename
 		fullPath = directory + filename
 		tapeList.append([filename,fullPath])
-	    #if filename.endswith(".atm") or filename.endswith(".py"): 
+	    #if filename.endswith('.atm') or filename.endswith('.py'): 
 	if ['test', 'test'] in tapeList: 
 			sampleListSynth.remove(['test','test'])
 	tapeList.sort()
 
-	print 
-	print "[TAPES]"
-	print tapeList
+	print('[TAPES]')
+	print(tapeList)
 
 
 def copytree(src, dst, symlinks=False, ignore=None):
 	ct=0
-	print str(len(os.listdir(src))) + " files to move"
+	print('%s files to move' % str(len(os.listdir(src))))
 
 	try:
 		for item in os.listdir(src):
 			s = os.path.join(src, item)
-			print "source file: ", s
+			print('source file: %s' % s)
 			
 			d = os.path.join(dst, item)
 			if os.path.isdir(dst)==0:
-				print "destination doesn't exist. creating..."
+				print('destination doesn\'t exist. creating...')
 				os.mkdir(dst)
 			if os.path.isdir(s):
-				print "recurse!"
+				print('recurse!')
 				sh.copytree(s, d, symlinks, ignore)
 			else:
 				sh.copy(s, d)
 				ct+=1
-				print "file "+str(ct)+" moved"
+				print('file %s moved' % str(ct)+) 
 	except:
-		print "must be an error. file full or smt"
+		print('must be an error. file full or smt')
 
 def scanSamples(directory):
 	#scans sample packs in a path and updates sample lists
-	print
-	print "Scanning for samplepacks"
+	print('Scanning for samplepacks')
 
-	directory=STORAGE_DIR+"rpi_rp1/samplepacks/"
+	directory=STORAGE_DIR+'rpi_rp1/samplepacks/'
 	for file in os.listdir(directory):
 		fullPath = directory + file
 		if os.path.isdir(fullPath):
-			#print
-			#print "directory: ",file
-			#print fullPath
+			#print('directory: ',file)
+			#print(fullPath)
 
 			containsAif=0
 			#each folder in parent directory
 			for subfile in os.listdir(fullPath):
-				subfullPath=fullPath+"/"+subfile
+				subfullPath=fullPath+'/'+subfile
 				#a path within a path
-				#print "SUBFILE: ",subfile
+				#print('SUBFILE: ',subfile)
 				if os.path.isdir(subfullPath):
 
-					if subfile=="synth" or "drum":
-						#print "nested directories, but it's okay cuz you named them"
+					if subfile=='synth' or 'drum':
+						#print('nested directories, but it's okay cuz you named them')
 						pack=readAifDir(subfile,subfullPath)
-						pack[2]["_types"]=subfile #if in synth or drum folder, override type
+						pack[2]['_types']=subfile #if in synth or drum folder, override type
 						pack[0]=file
 						#pack[1]=fullPath
 
-						if pack[2]["_types"]=='synth':
+						if pack[2]['_types']=='synth':
 							sampleListSynth.append(pack)
-						elif pack[2]["_types"]=='drum':
+						elif pack[2]['_types']=='drum':
 							sampleListDrum.append(pack)
 
-				elif subfile.endswith(".aif") or subfile.endswith(".aiff"):
+				elif subfile.endswith('.aif') or subfile.endswith('.aiff'):
 					containsAif=1
-				elif subfile.endswith(".DS_Store"):
+				elif subfile.endswith('.DS_Store'):
 					continue
 				else:
-					print "what's going on here. name your folders or hold it with the nesting"
-					print "SUBFILE: ",subfile
+					print('what\'s going on here. name your folders or hold it with the nesting')
+					print('SUBFILE: %s' % subfile)
 			if containsAif==1:
 				pack=readAifDir(file,fullPath)
-				if pack[2]["_types"]=='synth':
+				if pack[2]['_types']=='synth':
 					sampleListSynth.append(pack)
-				elif pack[2]["_types"]=='drum':
+				elif pack[2]['_types']=='drum':
 					sampleListDrum.append(pack)
 
 		# else:
 		# 	sampleList.append([file,fullPath]) #adds file andfullpath to samplelist
-	 #    #if file.endswith(".atm") or file.endswith(".py"): 
+	 #    #if file.endswith('.atm') or file.endswith('.py'): 
 
 	if ['test', 'test'] in sampleListSynth: 
 		sampleListSynth.remove(['test','test'])
 	if ['test', 'test'] in sampleListDrum: 
 		sampleListDrum.remove(['test','test'])
 
-	print
-	print "[SYNTH PACKS]"
-	print sampleListSynth
-	print
-	print "[DRUM PACKS]"
-	print sampleListDrum
-
+	print('[SYNTH PACKS]')
+	print(sampleListSynth)
+	print('[DRUM PACKS]')
+	print(sampleListDrum)
 
 	# for sample in sampleList:
 	# 	print
@@ -929,28 +917,27 @@ def scanSamples(directory):
 
 def readAifDir(name,path):
 	#should return amount of .aif's found in dir
-	aifsampleList=[["a","a"]]
+	aifsampleList=[['a','a']]
 	#print
-	#print "readAif directory: ",name
-	#print "path: ", path
-	pack=[name,path+"/",dict([('_types','mixed')])]
+	#print('readAif directory: ',name
+	#print('path: ', path
+	pack=[name,path+'/',dict([('_types','mixed')])]
 
 	for file in os.listdir(path):
-		fullPath=path+"/"+file
-		if file.endswith('.aif')or file.endswith(".aiff"):
-			#print "aif found at file: ",fullPath
+		fullPath=path+'/'+file
+		if file.endswith('.aif')or file.endswith('.aiff'):
+			#print('aif found at file: ',fullPath)
 			atts=readAif(fullPath)
 			aifsampleList.append([file,fullPath,atts['type']])
 			#print atts['type']
 
-		elif file.endswith(".DS_Store"):
+		elif file.endswith('.DS_Store'):
 			#ignore .DS_Store mac files
 			continue
 		else:
-			print fullPath, " is not a aif. what gives?"
-	if ["a","a"] in aifsampleList:
-			aifsampleList.remove(["a","a"])
-
+			print('%s is not a aif. what gives?' %  fullPath)
+	if ['a','a'] in aifsampleList:
+			aifsampleList.remove(['a','a'])
 
 	for sample in aifsampleList:
 	 	#print sample[1] #fullpath
@@ -963,14 +950,14 @@ def readAifDir(name,path):
 	 	
 	 	#print att
 	if ('cluster' in pack[2]) or ('sampler' in pack[2]) or ('drwave' in pack[2]) or ('string' in pack[2]) or ('pulse' in pack[2]) or ('phase' in pack[2]) or ('voltage' in pack[2]) or ('digital' in pack[2]) or ('dsynth' in pack[2]) or ('fm' in pack[2]):
-		#print "pack has synths", pack[2]
+		#print('pack has synths', pack[2]
 		pack[2]['_types']='synth'
 
 	if 'drum' in pack[2]:
-		#print "pack has drums"
+		#print('pack has drums'
 		#print pack[2]['_types']
 		if pack[2]['_types']=='synth':
-			#print "but synths too"
+			#print('but synths too'
 			pack[2]['_types']='mixed'
 		else:
 			pack[2]['_types']='drum'
@@ -980,7 +967,7 @@ def readAifDir(name,path):
 
 def readAif(path):
 
-	#print "//READAIFF from file ", path
+	#print('//READAIFF from file ', path
 	#print
 
 	# SAMPLE DRUM AIFF METADATA
@@ -1027,41 +1014,41 @@ def readAif(path):
 		#print line
 		if 'op-1' in line:
 			#print
-			#print 'op-1 appl chunk found!'
+			#print('op-1 appl chunk found!'
 
 
-			#print subline=line.split("op-1")
+			#print subline=line.split('op-1')
 			
-			# subline=line.split("op-1")[0]
+			# subline=line.split('op-1')[0]
 			# print subline[1]
 
 			data=line.split('{', 1)[1].split('}')[0] #data is everything in brackets
 			
 			#print 
-			#print "data!"
+			#print('data!'
 			#print data
 
-			data=switchBrack(data,",","|")
+			data=switchBrack(data,',','|')
 
-			attlist=data.split(",")
+			attlist=data.split(',')
 
 			#print
-			#print "attlist"
+			#print('attlist'
 			#print attlist
 
 			
 
 			#print
-			#print "attname: attvalue"
+			#print('attname: attvalue'
 
 			for i,line in enumerate(attlist):
 				#print line
-				linesplit=line.split(":")
+				linesplit=line.split(':')
 				attname=linesplit[0]
 				attname=attname[1:-1]
 				attvalue=linesplit[1]
 
-				valtype=""
+				valtype=''
 
 				#print attvalue
 				if isInt(attvalue):
@@ -1070,28 +1057,28 @@ def readAif(path):
 				if isfloat(attvalue):
 					valtype='float'
 
-				if attvalue=="false" or attvalue=="true":
+				if attvalue=='false' or attvalue=='true':
 					valtype='bool'
 
 				for j,char in enumerate(list(attvalue)):
-					#print "j,char"
+					#print('j,char')
 					#print j, char
 					if valtype=="":
-						if char=='"':
-							#print "string: ",char
-							valtype="string"
-						elif char=="[":
-							valtype="list"
+						if char=="'":
+							#print('string: %s' % char)
+							valtype='string'
+						elif char=='[':
+							valtype='list'
 
 
-				if valtype=="":
-					valtype="no type detected"
-				elif valtype=="string":
+				if valtype=='':
+					valtype='no type detected'
+				elif valtype=='string':
 					attvalue=attvalue[1:-1]
-				elif valtype=="list":
+				elif valtype=='list':
 					attvalue=attvalue[1:-1]
-					attvalue=attvalue.split("|")
-					#print "list found"
+					attvalue=attvalue.split('|')
+					#print('list found'
 					# for k,item in enumerate(attvalue):
 					# 	print k,item
 						#attvalue[k]=
@@ -1099,7 +1086,7 @@ def readAif(path):
 				
 
 				
-				#print attname,":",attvalue
+				#print attname,':',attvalue
 				#print valtype
 				#print
 
@@ -1107,10 +1094,10 @@ def readAif(path):
 				
 		#print attdata['type']
 		if 'type' in attdata:
-			#print "type exists"
+			#print('type exists'
 			True
 		else:
-			#print "type doesn't exist"
+			#print('type doesn't exist'
 			attdata.update({'type':'not specified'})
 		#except:
 		#	attdata.update({'type':'not specified'})
@@ -1144,32 +1131,30 @@ def switchBrack(data,fromdelim,todelim):
 			inbrack=0
 
 			for i,char in enumerate(datalist):
-				#print i, " ",char
-				if char=="[":
+				#print i, ' ',char
+				if char=='[':
 					inbrack=1
-					#print "in brackets"
+					#print('in brackets'
 
-				if char=="]":
+				if char==']':
 					inbrack=0
-					#print "out of brackets"
+					#print('out of brackets'
 
 				if inbrack ==1:
 
 					if char==fromdelim:
-						#print "comma found!"
+						#print('comma found!'
 						if data[i-1].isdigit():
-							#print "num preceding comma found"
+							#print('num preceding comma found'
 							datalist[i]=todelim
 			
-			newdata="".join(datalist)
+			newdata=''.join(datalist)
 			#print newdata
 			return newdata
-
-v_print = None
 def main():
         parser = argparse.ArgumentParser()
-        parser.add_argument('-v', '--verbose', action="count", 
-                            help="print verbose log messages")
+        parser.add_argument('-v', '--verbose', action='count', 
+                            help='print verbose log messages')
         args = parser.parse_args()
         
         # print generic console messages only on --verbose flag 
@@ -1186,9 +1171,9 @@ def main():
 
         # actual device operation
         device=init()
-        mlist=["tape deck", "backup tape","sample packs","midi","system"]
-        alist=["synth", "drum"," "]
-        listMenuScroll(device,mlist,alist,"MAIN",None,True,False) #no exit
+        mlist=['tape deck', 'backup tape','sample packs','midi','system']
+        alist=['synth', 'drum',' ']
+        listMenuScroll(device,mlist,alist,'MAIN',None,True,False) #no exit
 
 if __name__ == '__main__':
         main()
