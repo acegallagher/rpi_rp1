@@ -309,8 +309,8 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 
 		if GPIO.event_detected(key['down']):
 			#pos=pos+1
-			if pos==5:
-				vpos=1
+			if pos==5 and vpos<vmax:
+				vpos+=1
 			else:
 				pos=posDown(pos)
 				if pos==1:vpos=0
@@ -318,7 +318,7 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 
 		elif GPIO.event_detected(key['up']):
 			#pos=pos+1
-			if pos==1:
+			if pos==1 and vpos>0:
 				vpos-=5
 			else:
 				pos=posUp(pos,5)
@@ -328,7 +328,6 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 		elif GPIO.event_detected(key['key2']):
 			#dispListMenu(device,title,mlist,alist,pos,apos,vpos)
 			actionhandler(device,pos+vpos,apos,mname)
-			
 			
 			if actions==True:
 				done=0
