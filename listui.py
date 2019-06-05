@@ -161,7 +161,7 @@ def actionhandler(device,pos,apos,mname,draw=0):
 
 	#returning 1 escapes calling function to return
 	print('action handler @%s' % mname)
-	print('pos: %s apos: %s' pos,apos)
+	print('pos: %s apos: %s' % pos,apos)
 
 	if mname=='MAIN':
 		if pos==1 and apos==0:
@@ -237,7 +237,7 @@ def actionhandler(device,pos,apos,mname,draw=0):
 	elif mname=='MAIN>SYS':
 
 		if pos==1:
-			getip='ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}''# -d$'\\n' -f1'
+			getip="ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}''# -d$'\\n' -f1"
 			netstat=run_cmd(getip)
 			ip=netstat.split('\n')[0]
 
@@ -845,7 +845,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 			else:
 				sh.copy(s, d)
 				ct+=1
-				print('file %s moved' % str(ct)+) 
+				print('file %s moved' % str(ct)) 
 	except:
 		print('must be an error. file full or smt')
 
@@ -1158,14 +1158,7 @@ def main():
         args = parser.parse_args()
         
         # print generic console messages only on --verbose flag 
-        if args.verbose:
-                def v_print(*args):
-                        for arg in args:
-                                print arg,
-                                print
-        else:   
-                v_print = lambda *a: None      # do-nothing function
-
+        v_print = print if verbose else lambda *a, **k: None 
         global verboseprint
         verboseprint = v_print
 
