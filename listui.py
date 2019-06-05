@@ -1,3 +1,5 @@
+from __future__ import print_function # the future is now, and it is good
+
 import time, os, datetime, argparse
 
 import RPi.GPIO as GPIO
@@ -8,7 +10,7 @@ from luma.core.interface.serial import spi
 from luma.core.render           import canvas
 from luma.oled.device           import sh1106
 from subprocess                 import *
-from __future__                 import print_function
+
 
 #GLOBALS
 lowBat      = 4
@@ -1158,7 +1160,10 @@ def main():
         args = parser.parse_args()
         
         # print generic console messages only on --verbose flag 
-        v_print = print if verbose else lambda *a, **k: None 
+        if verbose:
+                v_print = print 
+        else:
+                v_print = lambda *a, **k: None 
         global verboseprint
         verboseprint = v_print
 
