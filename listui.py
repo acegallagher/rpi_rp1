@@ -1180,11 +1180,11 @@ def main():
                                 print
                         else:   
                                 v_print = lambda *a: None      # do-nothing function
-                                global verboseprint
-                                verboseprint = v_print
-        device=init()
+        global verboseprint
+        verboseprint = v_print
 
-        #MAIN MENU
+        # actual device operation
+        device=init()
         mlist=["tape deck", "backup tape","sample packs","midi","system"]
         alist=["synth", "drum"," "]
         listMenuScroll(device,mlist,alist,"MAIN",None,True,False) #no exit
