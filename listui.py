@@ -163,7 +163,7 @@ def actionhandler(device,pos,apos,mname,draw=0):
 
 	#returning 1 escapes calling function to return
 	print('action handler @%s' % mname)
-	print('pos: %s apos: %s' % pos,apos)
+	print('pos: %s apos: %s' % (pos,apos))
 
 	if mname=='MAIN':
 		if pos==1 and apos==0:
@@ -189,7 +189,7 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			return(1)
 
 	elif mname=='MAIN>TAPES':
-		print('tape actions @POS: %s, apos: %s' % pos,apos)
+		print('tape actions @POS: %s, apos: %s' % (pos,apos))
 
 		if apos==1: #assuming pos is valid becasue menuList was built from tapeList
 			loadTape(device,tapeList[pos-1][1])
@@ -749,7 +749,7 @@ def loadUnloadSample(device,spath,dpath,name,op):
 			if GPIO.event_detected(key['key2']):
 				print('copying')
 
-				print('%s >%s' % dpath,spath)
+				print('%s >%s' % (dpath,spath))
 						
 				if op=='load':
 					print('copying')
