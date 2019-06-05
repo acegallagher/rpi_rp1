@@ -1173,7 +1173,7 @@ def main():
         args = parser.parse_args()
         
         # print generic console messages only on --verbose flag 
-        if args.verbosity:
+        if args.verbose:
                 def v_print(*args):
                         for arg in args:
                                 print arg,
