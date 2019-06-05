@@ -15,6 +15,7 @@ VENDOR      = 0x2367
 PRODUCT     = 0x0002
 MOUNT_DIR   = "/media/op1"
 STORAGE_DIR = "/home/ace/" # dir where you checkout the git repo
+PROJECT_DIR = "/rpi_rp1/"
 USBID_OP1   = "*Teenage_OP-1*"
 
 OP1_PATH = MOUNT_DIR
@@ -33,19 +34,19 @@ key['press'] = 13
 
 #LIST OF SAMPLE PACKS AND PATHS
 sampleListSynth=[
-		["_josh",STORAGE_DIR+"/rpi_rp1/samplepacks/_josh/" ],
-		["courtyard",STORAGE_DIR+"/rpi_rp1/samplepacks/courtyard/" ],
-		["dawless",STORAGE_DIR+"/rpi_rp1/samplepacks/dawless/" ],
-		["C-MIX",STORAGE_DIR+"/rpi_rp1/samplepacks/C-MIX/" ],
-		["inkd",STORAGE_DIR+"/rpi_rp1/samplepacks/op1_3.2/inkdd/" ],
-		["Dark Energy",STORAGE_DIR+"/rpi_rp1/samplepacks/op1_3.2/Dark Energy/"],
-		["memories",STORAGE_DIR+"/rpi_rp1/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/memories/"],
-		["opines",STORAGE_DIR+"/rpi_rp1/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/opines/"],
-		["vanilla sun",STORAGE_DIR+"/rpi_rp1/samplepacks/vanilla sun/"],
-		["mellotron",STORAGE_DIR+"/rpi_rp1/samplepacks/mellotronAifs/"],
-		["hs dsynth",STORAGE_DIR+"/rpi_rp1/samplepacks/hs dsynth vol1/"],
-		["cassette",STORAGE_DIR+"/rpi_rp1/samplepacks/cassette/"],
-		["SammyJams",STORAGE_DIR+"/rpi_rp1/samplepacks/SammyJams Patches"],
+		["_josh",STORAGE_DIR+PROJECT_DIR+"/samplepacks/_josh/" ],
+		["courtyard",STORAGE_DIR+PROJECT_DIR+"/samplepacks/courtyard/" ],
+		["dawless",STORAGE_DIR+PROJECT_DIR+"/samplepacks/dawless/" ],
+		["C-MIX",STORAGE_DIR+PROJECT_DIR+"/samplepacks/C-MIX/" ],
+		["inkd",STORAGE_DIR+PROJECT_DIR+"/samplepacks/op1_3.2/inkdd/" ],
+		["Dark Energy",STORAGE_DIR+PROJECT_DIR+"/samplepacks/op1_3.2/Dark Energy/"],
+		["memories",STORAGE_DIR+PROJECT_DIR+"/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/memories/"],
+		["opines",STORAGE_DIR+PROJECT_DIR+"/samplepacks/CUCKOO OP-1 MEGA PACK/CUCKOO OP-1 MEGA PACK/OP-1 patches/Put in synth/opines/"],
+		["vanilla sun",STORAGE_DIR+PROJECT_DIR+"/samplepacks/vanilla sun/"],
+		["mellotron",STORAGE_DIR+PROJECT_DIR+"/samplepacks/mellotronAifs/"],
+		["hs dsynth",STORAGE_DIR+PROJECT_DIR+"/samplepacks/hs dsynth vol1/"],
+		["cassette",STORAGE_DIR+PROJECT_DIR+"/samplepacks/cassette/"],
+		["SammyJams",STORAGE_DIR+PROJECT_DIR+"/samplepacks/SammyJams Patches"],
 		]
 
 sampleListSynth=[["test","test"]]
@@ -53,18 +54,18 @@ sampleListDrum=[["test","test"]]
 
 #List of tapes and paths
 tapeList=[ 
-		["recycling bin v1",STORAGE_DIR+"/rpi_rp1/tapes/recycling bin v1/tape"],
-		["recycling bin v2",STORAGE_DIR+"/rpi_rp1/tapes/recycling bin v2"],
-		["fun with sequencers",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/fun with sequencers"],
-		["lofi family",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/lofi family"],
-		["primarily pentatonic",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/primarily pentatonic"],
-		["2018-02-24",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/2018-02-24"],
-		["lets start with guitar",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/lets start with guitar this time"],
-		["spaceman",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/2018-03-25"],
-		["slow & somber",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/slow & somber"],
-		["cool solo",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/cool solo"],
-		["technical advantage",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/technical advantage"],
-		["heartbeat slide",STORAGE_DIR+"/rpi_rp1/op1-tapebackups/heartbeat slide"]
+		["recycling bin v1",STORAGE_DIR+PROJECT_DIR+"/tapes/recycling bin v1/tape"],
+		["recycling bin v2",STORAGE_DIR+PROJECT_DIR+"/tapes/recycling bin v2"],
+		["fun with sequencers",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/fun with sequencers"],
+		["lofi family",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/lofi family"],
+		["primarily pentatonic",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/primarily pentatonic"],
+		["2018-02-24",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/2018-02-24"],
+		["lets start with guitar",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/lets start with guitar this time"],
+		["spaceman",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/2018-03-25"],
+		["slow & somber",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/slow & somber"],
+		["cool solo",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/cool solo"],
+		["technical advantage",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/technical advantage"],
+		["heartbeat slide",STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/heartbeat slide"]
 
 		]
 #print tapeList
@@ -566,7 +567,7 @@ def backupTape(device):
 				#draw.text((0,20),"Backup tape?","white")
 				#Copy Operation
 				cdate=datetime.datetime.now()
-				dpath=STORAGE_DIR+"/rpi_rp1/op1-tapebackups/"+str(datetime.date.today())+" "+cdate.strftime("%I:%M%p")
+				dpath=STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/"+str(datetime.date.today())+" "+cdate.strftime("%I:%M%p")
 				spath1=OP1_PATH+'/tape/track_1.aif'
 				spath2=OP1_PATH+'/tape/track_2.aif'
 				spath3=OP1_PATH+'/tape/track_3.aif'
@@ -808,7 +809,7 @@ def loadFirmware(device):
 		return
 
 def scanTapes(device):
-	directory=STORAGE_DIR+"/rpi_rp1/op1-tapebackups/"
+	directory=STORAGE_DIR+PROJECT_DIR+"/op1-tapebackups/"
 	#directory=HOME_DIR+"/op1-tapebackups/"
 
 	print
