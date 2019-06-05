@@ -1165,6 +1165,7 @@ def switchBrack(data,fromdelim,todelim):
 			#print newdata
 			return newdata
 
+v_print = None
 def main():
         parser = argparse.ArgumentParser()
         parser.add_argument('-v', '--verbosity', action="count", 
