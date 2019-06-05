@@ -1168,14 +1168,13 @@ def switchBrack(data,fromdelim,todelim):
 v_print = None
 def main():
         parser = argparse.ArgumentParser()
-        parser.add_argument('-v', '--verbosity', action="count", 
-                            help="increase output verbosity (e.g., -vv is more than -v)")
+        parser.add_argument('-v', '--verbose', action="count", 
+                            help="print verbose log messages")
         args = parser.parse_args()
         
         # print generic console messages only on --verbose flag 
         if args.verbosity:
                 def v_print(*args):
-                        # Print each argument separately so caller doesn't have to stuff everything into one string
                         for arg in args:
                                 print arg,
                                 print
