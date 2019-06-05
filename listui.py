@@ -1,5 +1,6 @@
 import time, os, datetime
 
+
 import RPi.GPIO as GPIO
 import shutil   as sh
 import usb.core
@@ -8,6 +9,7 @@ from luma.core.interface.serial import spi
 from luma.core.render           import canvas
 from luma.oled.device           import sh1106
 from subprocess                 import *
+from __future__                 import print_function
 
 #GLOBALS
 lowBat      = 4
@@ -72,6 +74,16 @@ tapeList=[
 keys={}
 tapeList=[["test","test"]]
 
+# print generic console messages only on --verbose flag 
+if verbose:
+    def verboseprint(*args):
+        # Print each argument separately so caller doesn't have to stuff everything into one string
+        for arg in args:
+           print arg,
+        print
+else:   
+    verboseprint = lambda *a: None      # do-nothing function
+
 # INITIALIZATION
 def init():
 
@@ -84,8 +96,6 @@ def init():
 	drawText(device,['Initializing GPIO',"Scanning Tapes","Scanning Samples"])
 	scanSamples("dummy")
 	drawText(device,['Initializing GPIO',"Scanning Tapes","Scanning Samples","done."])
-
-	#boot logo!
 	drawSplash(device)
 	time.sleep(2)
 
@@ -93,7 +103,7 @@ def init():
 
 def initgpio():
 
-	print "Initializing GPIO"
+	verboseprint("Initializing GPIO")
 	GPIO.setmode(GPIO.BCM)
 
 	GPIO.setup(key['key1'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
