@@ -151,7 +151,7 @@ def forcedir(path):
   if not os.path.isdir(path):
     os.makedirs(path)
 
-# UI UTILITES
+# waits for a keypress 
 def wait(keys,waitkey):
 	while True:
 		if GPIO.event_detected(key[waitkey]):
@@ -159,6 +159,7 @@ def wait(keys,waitkey):
                         return
 		time.sleep(.01)
 
+# handles actions when in the menus and changes display accordingly , 
 def actionhandler(device,pos,apos,mname,draw=0):
 
 	#returning 1 escapes calling function to return
@@ -281,7 +282,8 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			loadUnloadSample(device,'',dpath,'','delete')
 	return(0)
 
-# DISPLAY UTILITIES
+# DISPLAY UTILITIES, THIS IS THE PRIMARY LOOP... 
+# THERE ART TWO MENU LEVELS, PRIMARY AND SECONDARY 
 def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 
 	#mlist: menu list
@@ -291,11 +293,12 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 	print(mlist)
 
 	#initial settings
-	keys={}
-	pos=1
-	apos=0
-	vpos=0
-	vmax=0
+	keys = {}
+	pos  = 1 # this is the position on the screen menu [1-5], as dictated by screen size
+	vpos = 0 # this is the position in the data menu, as dictated by the number of folders etc.
+	vmax = 0 # holds how many possible menu locations there are
+	apos = 0 # I don't understand apos
+
 
 	if len(mlist)>5:
 		print('long list')
@@ -325,7 +328,7 @@ def listMenuScroll(device,mlist,alist,mname,draw=0,actions=False,exit=True):
 				if pos==5:vpos=vmax
 			#dispListMenu(device,title,mlist,alist,pos)
 
-		elif GPIO.event_detected(key['key2']):
+		elif GPIO.event_detected(key['key2']): # go to next menu level! 
 			#dispListMenu(device,title,mlist,alist,pos,apos,vpos)
 			actionhandler(device,pos+vpos,apos,mname)
 			
