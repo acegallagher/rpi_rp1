@@ -193,14 +193,13 @@ def actionhandler(device,pos,apos,mname,draw=0):
 		        while True:
 		                if GPIO.event_detected(key['key2']): # 
 	                                with canvas(device) as draw:
-		                                draw.rectangle((18,6,108,58), outline='white', fill='black')
-		                                draw.text((0,16),'         GOODNIGHT         ','white')
+		                                draw.rectangle((10,3,118,61), outline='white', fill='black')
+		                                draw.text((0,8),'      GOODNIGHT?      ','white')
                                                 #eyes
-			                        draw.rectangle((45,35,60,40), outline='black', fill='white')
-			                        draw.rectangle((80,35,95,40), outline='black', fill='white')
-
-			                        draw.rectangle((55,95,58,96), outline='black', fill='white')
-                                                draw.rectangle((55,95,58,96), outline='black', fill='white')
+			                        draw.rectangle((40,35,45,40), outline='black', fill='white')
+			                        draw.rectangle((88,35,93,40), outline='black', fill='white')
+                                                #mouth
+			                        draw.rectangle((40,50,93,55), outline='black', fill='white')
 
 			                #run_cmd('sudo poweroff')
                                         return
@@ -896,7 +895,7 @@ def main():
 
         # actual device operation, start on main menu here
         device=init()
-        mlist=['tape deck', 'backup tape','sample packs','system','shutdown']
+        mlist=['tape deck', 'backup tape','sample packs','system info','shutdown']
         alist=['synth', 'drum',' ']
         listMenuScroll(device,mlist,alist,'MAIN',None,True,False) #no exit
 
