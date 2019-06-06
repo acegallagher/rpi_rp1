@@ -189,10 +189,11 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			return(1)
 
 		elif pos==5 and apos==0:
-			drawText(device,['powering off?','  2-confirm'])
+			drawText(device,['powering off?','   1-cancel','  2-confirm'])
 		        if GPIO.event_detected(key['key2']): # 
 			        drawText(device,['GOODNIGHT?'])
-			        run_cmd('poweroff')
+			        run_cmd('sudo poweroff')
+                                return
 			elif GPIO.event_detected(key['key1']):
                                 return
 
@@ -231,12 +232,11 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			netstat=run_cmd(getip)
 			ip=netstat.split('\n')[0]
 
-			print('wlan0 status')
-			print(ip)
+			print('wlan0 status\n %s' % ip)
 
 			drawText(device,['wlan0 status',ip])
 			wait({},'key1')
-		# 	term.println(ip)
+
 		elif pos==2: # poweroff
 			drawText(device,['powering off...'])
 			run_cmd('sudo poweroff')
@@ -341,6 +341,7 @@ def listMenuScroll(device, mlist, alist, mname, draw=0, actions=False, exit=True
 				elif GPIO.event_detected(key['key1']):
 					done=1
 					apos=0
+
                         dispListMenu(device,title,mlist,alist,pos,0,vpos)
 
 		#// EXIT STRATEGY
@@ -498,7 +499,7 @@ def backupTape(device):
 
 	if os.path.exists(OP1_PATH)==1:
 
-		drawText(device,['op1 connection success','backup tape?',' 1-back',' 2-yup'])
+		drawText(device,['op1 connected','backup tape?',' 1-back',' 2-yup'])
 		print('op1 connect success\n Backup Track?\n   1-back\n   2-continue\n ')
 
 		#response loop
@@ -553,8 +554,8 @@ def loadTape(device,source):
 
 	if os.path.exists(OP1_PATH)==1:
 		
-		print('op1 connection success\n Download tape?\n (this overwrites!)\n   1-back\n    2-yes\n')
-		drawText(device,['op1 connection success','load tape?',' 1- back','2-yes'])
+		print('op1 connected\n Download tape?\n (this overwrites!)\n   1-back\n    2-yes\n')
+		drawText(device,['op1 connected','load tape?',' 1- back','2-yes'])
 
 		#response loop
 		while True:
@@ -604,8 +605,8 @@ def loadUnloadSample(device,spath,dpath,name,op):
 
 	if os.path.exists(OP1_PATH)==1:
 		
-		print('op1 connection success')
-		drawText(device,['op1 connection success','you sure?','1-back','2-yes'])
+		print('op1 connected')
+		drawText(device,['op1 connected success','you sure?','1-back','2-yes'])
 
 		while True:
 			if GPIO.event_detected(key['key2']):
@@ -640,7 +641,7 @@ def loadUnloadSample(device,spath,dpath,name,op):
 
 def loadFirmware(device):
 	if os.path.exists('/media/pi/OP-1')==1:
-		drawText(device,['op1 connection success','load firmware?','  1-back','  2-yup'])
+		drawText(device,['op1 connected','load firmware?','  1-back','  2-yup'])
 		while True:
 			if GPIO.event_detected(key['key2']):
 				print('copying firmware')
