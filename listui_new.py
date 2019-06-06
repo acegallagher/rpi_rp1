@@ -35,9 +35,9 @@ key['down']  = 19
 key['right'] = 26
 key['press'] = 13
  
-trackList = ['/track_1.aif', '/track_2.aif','/track_3.aif','/track_4.aif']
+trackList  = ['/track_1.aif', '/track_2.aif','/track_3.aif','/track_4.aif']
 trackNames = ['track 1', 'track_2','track 3','track 4']
-nTracks = len(trackList)
+nTracks    = len(trackList)
 
 #LIST OF SAMPLE PACKS AND PATHS
 sampleListSynth=[
@@ -298,6 +298,7 @@ def listMenuScroll(device, mlist, alist, mname, draw=0, actions=False, exit=True
 		print('long list')
 		vmax=len(mlist)-5
 
+	dispListMenu(device,title,mlist,alist,pos,0,vpos) 
 	while True:
 
 		# fix me, no need to update the display every loop I don't think
@@ -355,6 +356,7 @@ def listMenuScroll(device, mlist, alist, mname, draw=0, actions=False, exit=True
 				elif GPIO.event_detected(key['key1']):
 					done=1
 					apos=0
+                        dispListMenu(device,title,mlist,alist,pos,0,vpos)
 
 		#// EXIT STRATEGY
 		elif GPIO.event_detected(key['key1']):
@@ -452,8 +454,8 @@ def drawProgress(device,title,progress):
 def drawSplash(device):
 	with canvas(device) as draw:
 		draw.rectangle((18,12,108,52), outline='white', fill='black')
-		draw.text((0,16),'         OPC         ','white')
-		draw.text((0,38),'     tink3rtanker    ','white')
+		draw.text((0,16),'         RP1         ','white')
+		draw.text((0,38),'         ACE         ','white')
 
 # MENUS
 def sampleMenuSynth(device):
@@ -523,8 +525,8 @@ def backupTape(device):
 
 	if os.path.exists(OP1_PATH)==1:
 
-		drawText(device,['op1 connection success','backup tape?','1-back',' 2-yup'])
-		print('op1 connect success\n Backup Track?\n   1-back\n  2-continue\n ')
+		drawText(device,['op1 connection success','backup tape?',' 1-back',' 2-yup'])
+		print('op1 connect success\n Backup Track?\n   1-back\n   2-continue\n ')
 
 		#response loop
 		while True:
