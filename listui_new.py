@@ -1,4 +1,4 @@
-from __future__ import print_function # the future is now, and it is good
+ from __future__ import print_function # the future is now, and it is good
 
 import time, os, datetime, argparse
 
@@ -185,7 +185,10 @@ def actionhandler(device,pos,apos,mname,draw=0):
 				sampleMenuDrum(device)
 
 		elif pos==4: 
-			midiMenu(device)
+			drawText(device,['powering off?','  2-confirm'])
+		        if GPIO.event_detected(key['key2']): # 
+			        drawText(device,['GOODNIGHT?','  2-confirm'])
+			        run_cmd('sudo poweroff')
 
 		elif pos==5 and apos==0:
 			sysMenu(device)
@@ -220,25 +223,6 @@ def actionhandler(device,pos,apos,mname,draw=0):
 		elif apos==2:
 			loadUnloadSample(device,spath,dpath,sampleListDrum[pos-1][0],'delete')
 
-	elif mname=='MAIN>MIDI':
-		print('midi actions')
-		if pos==1:
-			midiSrc='14'
-			midiDst='20'
-		elif pos==2:
-			midiSrc='20'
-			midiDst='14'
-		elif pos==3:
-			midiSrc='20'
-			midiDst='24'
-		elif pos==4:
-			midiSrc='24'
-			midiDst='20'
-
-		out=run_cmd('sudo aconnect '+midiSrc+' '+midiDst)
-		drawText(device,[out,'done'])
-		time.sleep(1)
-
 	elif mname=='MAIN>SYS':
 
 		if pos==1:
@@ -250,7 +234,7 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			print(ip)
 
 			drawText(device,['wlan0 status',ip])
-			wait({},'key3')
+			wait({},'key1')
 		# 	term.println(ip)
 		elif pos==2: # poweroff
 			drawText(device,['powering off...'])
@@ -486,18 +470,6 @@ def tapeMenu(device):
 
 	if ['test', 'test'] in tapeList: 
 		tapeList.remove(['test','test'])
-
-def midiMenu(device):
-	
-	output = run_cmd('sudo aconnect -i -o')
-	outlines=output.splitlines()
-	drawText(device,outlines)
-	wait({},'key2')
-	time.sleep(1)
-
-	mlist=['14:20', '20:14','20:24','24:20']
-	alist=['go', '[empty]','[empty]']
-	listMenuScroll(device,mlist,alist,'MAIN>MIDI')
 
 def sysMenu(device):
 	alist=['go', '[empty]','[empty]']
@@ -912,7 +884,7 @@ def main():
 
         # actual device operation, start on main menu here
         device=init()
-        mlist=['tape deck', 'backup tape','sample packs','midi','system']
+        mlist=['tape deck', 'backup tape','sample packs','system','shutdown']
         alist=['synth', 'drum',' ']
         listMenuScroll(device,mlist,alist,'MAIN',None,True,False) #no exit
 
