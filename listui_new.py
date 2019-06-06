@@ -192,8 +192,17 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			drawText(device,['powering off?','','   1-cancel','   2-confirm'])
 		        while True:
 		                if GPIO.event_detected(key['key2']): # 
-			                drawText(device,['GOODNIGHT?'])
-			                run_cmd('sudo poweroff')
+	                                with canvas(device) as draw:
+		                                draw.rectangle((18,6,108,58), outline='white', fill='black')
+		                                draw.text((0,16),'         GOODNIGHT         ','white')
+                                                #eyes
+			                        draw.rectangle((45,35,60,40), outline='black', fill='white')
+			                        draw.rectangle((80,35,95,40), outline='black', fill='white')
+
+			                        draw.rectangle((55,95,58,96), outline='black', fill='white')
+                                                draw.rectangle((55,95,58,96), outline='black', fill='white')
+
+			                #run_cmd('sudo poweroff')
                                         return
 			        elif GPIO.event_detected(key['key1']):
                                         return
