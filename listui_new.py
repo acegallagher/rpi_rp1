@@ -196,10 +196,10 @@ def actionhandler(device,pos,apos,mname,draw=0):
 		                                draw.rectangle((10,3,118,61), outline='white', fill='black')
 		                                draw.text((0,8),'      GOODNIGHT?      ','white')
                                                 #eyes
-			                        draw.rectangle((40,35,45,40), outline='black', fill='white')
-			                        draw.rectangle((88,35,93,40), outline='black', fill='white')
+			                        draw.rectangle((35,30,40,35), outline='black', fill='white')
+			                        draw.rectangle((83,30,88,35), outline='black', fill='white')
                                                 #mouth
-			                        draw.rectangle((40,50,93,55), outline='black', fill='white')
+			                        draw.rectangle((35,45,88,50 ), outline='black', fill='white')
 
 			                #run_cmd('sudo poweroff')
                                         return
