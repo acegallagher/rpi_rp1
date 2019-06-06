@@ -1,4 +1,4 @@
- from __future__ import print_function # the future is now, and it is good
+from __future__ import print_function # the future is now, and it is good
 
 import time, os, datetime, argparse
 
@@ -185,15 +185,16 @@ def actionhandler(device,pos,apos,mname,draw=0):
 				sampleMenuDrum(device)
 
 		elif pos==4: 
-			drawText(device,['powering off?','  2-confirm'])
-		        if GPIO.event_detected(key['key2']): # 
-			        drawText(device,['GOODNIGHT?','  2-confirm'])
-			        run_cmd('sudo poweroff')
+			sysMenu(device)
+			return(1)
 
 		elif pos==5 and apos==0:
-			sysMenu(device)
-			#run_cmd('sudo python ui.py -i spi -d sh1106 -r 2 &')
-			return(1)
+			drawText(device,['powering off?','  2-confirm'])
+		        if GPIO.event_detected(key['key2']): # 
+			        drawText(device,['GOODNIGHT?'])
+			        run_cmd('poweroff')
+			elif GPIO.event_detected(key['key1']):
+                                return
 
 	elif mname=='MAIN>TAPES':
 		print('tape actions @POS: %s, apos: %s' % (pos,apos))
