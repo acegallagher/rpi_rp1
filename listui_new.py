@@ -189,13 +189,14 @@ def actionhandler(device,pos,apos,mname,draw=0):
 			return(1)
 
 		elif pos==5 and apos==0:
-			drawText(device,['powering off?','   1-cancel','  2-confirm'])
-		        if GPIO.event_detected(key['key2']): # 
-			        drawText(device,['GOODNIGHT?'])
-			        run_cmd('sudo poweroff')
-                                return
-			elif GPIO.event_detected(key['key1']):
-                                return
+			drawText(device,['powering off?','','   1-cancel','   2-confirm'])
+		        while True:
+		                if GPIO.event_detected(key['key2']): # 
+			                drawText(device,['GOODNIGHT?'])
+			                run_cmd('sudo poweroff')
+                                        return
+			        elif GPIO.event_detected(key['key1']):
+                                        return
 
 	elif mname=='MAIN>TAPES':
 		print('tape actions @POS: %s, apos: %s' % (pos,apos))
@@ -892,4 +893,3 @@ def main():
 
 if __name__ == '__main__':
         main()
-
