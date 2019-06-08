@@ -84,8 +84,7 @@ class Menu:
 	
 	width = 100 # width of hilight?
 	mlistc=['white']*10
-	if self.pos != 0: #setup cursor
-		mlistc[self.pos]='black'
+	mlistc[self.currSelected]='black'
 
 	#action menu
 	axdist=64
@@ -107,9 +106,9 @@ class Menu:
 	    # else:
 	    # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
 
-            # this highlights the currently selected item
-	    if self.pos != 0:
-	        draw.rectangle((xOffset, self.pos*10+yOffset, xOffset+width, (self.pos*10)+10+yOffset), outline='white', fill='white')
+            # highlight the currently selected item
+            pos = self.currSelected
+	    draw.rectangle((xOffset, pos*10+yOffset, xOffset+width, (pos*10)+10+yOffset), outline='white', fill='white')
             
             # this draw the text for each entry in the menu
             print("----------------------")
@@ -148,6 +147,43 @@ class Menu:
                     
                 return
 
+	    elif GPIO.event_detected(key['key2']): # key2 is a selection, follow the action/submenu selected
+
+			if entryIsAction==True: # call function that entry describes
+
+			else: # display submenu
+
+
+			#action loop
+			while done==0:
+				time.sleep(.05)
+
+				if GPIO.event_detected(key['down']):
+					#pos=pos+1
+					apos=posDown(apos,3)
+	                                dispListMenu(device,title,mlist,alist,pos,0,vpos) 
+
+				elif GPIO.event_detected(key['up']):
+					#pos=pos+1
+					apos=posUp(apos,3)
+	                                dispListMenu(device,title,mlist,alist,pos,0,vpos) 
+
+				elif GPIO.event_detected(key['key2']):
+					actionhandler(device,pos+vpos,apos,mname,vpos)
+					apos=0
+					done=1
+
+				# back exit
+				elif GPIO.event_detected(key['key1']):
+					done=1
+					apos=0
+
+                        dispListMenu(device,title,mlist,alist,pos,0,vpos)
+
+		#// EXIT STRATEGY
+		elif GPIO.event_detected(key['key1']):
+			if exit==True:
+				return
 
 class Action: 
 
