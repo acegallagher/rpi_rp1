@@ -116,6 +116,9 @@ class Menu:
                 # this draw the text for each entry in the menu
                 idx = 0
 	        for line in enumerate(self.entries.items()):
+                    print(idx)
+                    print(line)
+
 		    draw.text((xOffset,(idx+1)*10+yOffset),line,mlistc[idx])
                     idx = idx+1
 
@@ -201,6 +204,7 @@ def DrawSplash(device):
 		draw.rectangle((18,12,108,52), outline='white', fill='black')
 		draw.text((0,16),'         RP1         ','white')
 		draw.text((0,38),'         ACE         ','white')
+	time.sleep(2.0)
 
 # parse args and run the code!
 def main():
