@@ -49,6 +49,7 @@ class Menu:
         self.entries  = {} 
         self.name     = _name 
         self.exitable = _exitable
+        self.pos      = 0
 
     def addAction(self, actionName, action):
         # add a check here to make sure 'action' is an Action
@@ -81,15 +82,13 @@ class Menu:
 	
 	#menu
 	width = 100 #width of hilight
-	mlistc=['white']*self.size
-	if pos != 0: #setup cursor
-		mlistc[pos-1]='black'
+	mlistc=['white']*10
+	if self.pos != 0: #setup cursor
+		mlistc[self.pos]='black'
 
 	#action menu
 	axdist=64
 	alistc=['white']*len(alist)
-	if apos != 0:
-		alistc[apos-1]='black'
 
         while True:
 	    with canvas(device) as draw:
@@ -119,13 +118,13 @@ class Menu:
 		    draw.text((xOffset,(idx+1)*10+yOffset),line,mlistc[idx])
 
                 # what does this do
-	        if apos != 0:
-		    draw.rectangle((60,13,128,64), outline='black', fill='black')
-		    draw.rectangle((60,13,61,48), outline='white', fill='white')
-		    draw.rectangle((axdist, apos*10+yOffset, axdist+width, (apos*10)+10+yOffset), outline='white', fill='white')
-		    for idx,line in enumerate(alist):
-		        #print('idx: ',idx,'line: ',line,'fill: ',flist[idx])
-		        draw.text((axdist,(idx+1)*10+yOffset),line,alistc[idx])
+	        # if apos != 0:
+		#     draw.rectangle((60,13,128,64), outline='black', fill='black')
+		#     draw.rectangle((60,13,61,48), outline='white', fill='white')
+		#     draw.rectangle((axdist, apos*10+yOffset, axdist+width, (apos*10)+10+yOffset), outline='white', fill='white')
+		#     for idx,line in enumerate(alist):
+		#         #print('idx: ',idx,'line: ',line,'fill: ',flist[idx])
+		#         draw.text((axdist,(idx+1)*10+yOffset),line,alistc[idx])
 
 
 class Action: 
@@ -248,7 +247,7 @@ def main():
         # get everything going
 	serial = spi(device=0, port=0)
 	device = sh1106(serial,rotate=2)
-        drawSplash(device)
+        DrawSplash(device)
         Initgpio()
         mainMenu.display(device) # this should loop forever
 
