@@ -49,7 +49,7 @@ class Menu:
         self.entries  = {} 
         self.name     = _name 
         self.exitable = _exitable
-        self.pos      = 0
+        self.pos      = 0 # current selected entry
 
     def addAction(self, actionName, action):
         # add a check here to make sure 'action' is an Action
@@ -88,7 +88,7 @@ class Menu:
 
 	#action menu
 	axdist=64
-	alistc=['white']*len(alist)
+	#alistc=['white']*len(alist)
 
         while True:
 	    with canvas(device) as draw:
@@ -110,8 +110,8 @@ class Menu:
 	        # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
 
                 # this highlights the currently selected item
-	        if pos != 0:
-		    draw.rectangle((xOffset, pos*10+yOffset, xOffset+width, (pos*10)+10+yOffset), outline='white', fill='white')
+	        if self.pos != 0:
+		    draw.rectangle((xOffset, self.pos*10+yOffset, xOffset+width, (self.pos*10)+10+yOffset), outline='white', fill='white')
                 
                 # this draw the text for each entry in the menu
 	        for idx,line in enumerate(mlist):
