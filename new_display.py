@@ -115,7 +115,7 @@ class Menu:
             print(self.size())
             print("----------------------")
             #currFiveEntries = [entry for entry in self.entries.values()[self.currTop:self.currTop+5]]
-            currFiveEntries = {k: mydict[k] for k in sorted(self.entries.keys())[self.currTop:self.currTop+5]}
+            currFiveEntries = {k: self.entries[k] for k in sorted(self.entries.keys())[self.currTop:self.currTop+5]}
 	    #for ind, entry in enumerate(self.entries.items()):
 	    for ind, entry in enumerate(currFiveEntries):
                 entryName = entry[0]
@@ -147,7 +147,7 @@ class Menu:
                     self.currTop = self.size()-5
                     
                 return
-
+  
 
 class Action: 
 
