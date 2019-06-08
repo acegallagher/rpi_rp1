@@ -12,106 +12,198 @@ from luma.oled.device           import sh1106
 from subprocess                 import *
 
 # there are two terms you're using
-# 1: menu    -- entries that get displayed as menu lists
-# 2: actions -- entries that have 'actions' that run (i.e. functions... such as backing up tape)
+# 1: menu    -- menu entries that get displayed as a list on the screen 
+# 2: actions -- menu entries that call functions to complete tasks (i.e  backing up the tape)
 
-# A Menu consists of one or more sub-Menu objects that a user can choose
-# to run or subroutines that the user can call.
+#GLOBALS
+lowBat      = 4
+VENDOR      = 0x2367
+PRODUCT     = 0x0002
+MOUNT_DIR   = '/media/op1'
+STORAGE_DIR = '/home/ace/' # dir where you checkout the git repo
+PROJECT_DIR = '/rpi_rp1/'
+USBID_OP1   = '*Teenage_OP-1*'
+
+OP1_PATH = MOUNT_DIR
+
+#KEYS
+key={}
+key['key1'] = 21 # used as 'go back' key 
+key['key2'] = 20 # used as 'select item' key
+key['key3'] = 16
+
+key['left']  = 5 
+key['up']    = 6
+key['down']  = 19
+key['right'] = 26
+key['press'] = 13
+ 
+trackList  = ['/track_1.aif', '/track_2.aif','/track_3.aif','/track_4.aif']
+trackNames = ['track 1', 'track_2','track 3','track 4']
+nTracks    = len(trackList)
+
 class Menu:
 
     # Constructor
-    def __init__(self, name):
-        self.entries = {} 
-        self.heading = name
+    def __init__(self, _name, _exitable=True):
+        self.entries  = {} 
+        self.name     = _name 
+        self.exitable = _exitable
 
-    # Adds an option to this Menu. An option consists of a number,
-    # name, and the actual object it corresponds to (submenu or procedure).
-    # The last value in each key-value pair denotes whether the given option
-    # should trigger an exit from the current Menu after it is called.
-    def addAction(self, entryNumber, actionName, action, TriggersExit):
-        self.entries[entryNumber] = [actionName, action, TriggersExit]
+    def addAction(self, actionName, action, triggersExit):
+        # add a check here to make sure 'action' is an Action
+         self.entries[self.size] = [actionName, action, triggersExit]
 
-    def addSubMenu(self, entryNumber, optionName, menu):
-        self.entries[entryNumber] = [optionName, menu, False]
+    def addSubMenu(self, menuName, menu):
+        # add a check here to make sure 'entry' is of type Menu
+        self.entries[self.size] = [menuName, menu, False]
 
     # Returns the number of options in this Menu
     def size(self):
-        return len(self.options)
-
-    # Displays this Menu's error text
-    def displayError(self):
-        print("\n{}\n".format(self.errorText))
+         return len(self.entries)
 
     # Prints the Menu in its entirety
-    def display(self):
-        print(self.prompt)
+    def log(self):
+        print(self.name)
         for i in range(1, self.size()+1):
-            print("{} - {}".format( i, self.options[i][0] ))
+            print("{} - {}".format( i, self.entries[i][0] ))
         print()
 
+
     # Runs this Menu
-    def run(self):
-        userInput = ""
-        self.display()
+    def display(self, device):
+
+        # move these consts somewhere else that makes more sense
+
+	#offsets
+	xOffset = 5 
+	yOffset = 4
+	
+	#menu
+	width = 100 #width of hilight
+	mlistc=['white']*len(mlist)
+	if pos != 0: #setup cursor
+		mlistc[pos-1]='black'
+
+	#action menu
+	axdist=64
+	alistc=['white']*len(alist)
+	if apos != 0:
+		alistc[apos-1]='black'
+
         while True:
-            userInput = input("Your selection: ")
-            try:
-                userInput = int(userInput)
-                if userInput <= 0 or userInput > self.size():
-                    self.displayError()
-                else:
-                    # If the menu option is a function, call it
-                    if callable(self.options[userInput][1]):
-                        self.options[userInput][1]()
-                        # And if it's an option that triggers a return/exit, then return after it's called
-                        if self.options[userInput][2]:
-                            return
-                        # Otherwise, redisplay the menu options
-                        else:
-                            self.display()
-                    # But if the menu option is a submenu, run it
-                    else:
-                        self.options[userInput][1].run()
-                        # And display the calling menu's options again upon return from the submenu
-                        self.display()
-            except ValueError:
-                self.displayError()
+	    with canvas(device) as draw:
+
+	        # draw header/title
+	        draw.rectangle((0,0,128,12), outline='white', fill='white')
+                draw.text((2,0), self.name, 'black')
+
+	        # draw OP1 status marker in top corner 
+	        if is_connected()==1:
+		    draw.rectangle((116,2,124,10), outline='black', fill='black')
+	        else:
+		    draw.rectangle((116,2,124,10), outline='black', fill='white')
+
+                # it would be nice to eventually have a battery indicator
+	        # if GPIO.event_detected(lowBat):
+ 	        # 	draw.rectangle((96,3,108,9), outline='black', fill='black')
+	        # else:
+	        # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
+
+                # this highlights the currently selected item
+	        if pos != 0:
+		    draw.rectangle((xdist, pos*10+yoffset, xdist+width, (pos*10)+10+yoffset), outline='white', fill='white')
+                
+                # this draw the text for each entry in the menu
+	        for idx,line in enumerate(mlist):
+		    draw.text((xdist,(idx+1)*10+yoffset),line,mlistc[idx])
+
+                # what does this do
+	        if apos != 0:
+		    draw.rectangle((60,13,128,64), outline='black', fill='black')
+		    draw.rectangle((60,13,61,48), outline='white', fill='white')
+		    draw.rectangle((axdist, apos*10+yoffset, axdist+width, (apos*10)+10+yoffset), outline='white', fill='white')
+		    for idx,line in enumerate(alist):
+		        #print('idx: ',idx,'line: ',line,'fill: ',flist[idx])
+		        draw.text((axdist,(idx+1)*10+yoffset),line,alistc[idx])
+
 
 class Action: 
 
-    # Constructor
-    def __init__(self, name, function):
-        self.title  = name
-        self.action = function
+    def __init__(self, _name, _function, _triggersExit=False):
+        self.name   = _name
+        self.action = _function
+        self.triggersExit = _triggersExit
 
     def name(self):
         return self.name
 
-
-def Exit():
-    print("\n\tThanks for using my program!\n")
-
-def Return():
-    return
-
-def Option1():
-    values = input("\n\tEnter some values: ")
-    print("\n\tYou entered these values:", end=" ")
-    for i in range(0, len(values)):
-        print(values[i], end=" ")
-    print()
-
-def MyLife():
-    print("\n\tLife's hard.\n")
-
-def GettingHelp():
-    print("\n\tRecursion jokes suck\n")
+    def run(self): 
+        self.action()
 
 def Placeholder():
-    print("functions haven't been implemented yet")
+    print("\n this function hasn't been implemented yet")
+
+def Shutdown():
+
+    print("\n powering off...") 
+    drawText(device,['powering off?','','   1-cancel','   2-confirm'])
+    while True:
+	if GPIO.event_detected(key['key2']): # 
+	    with canvas(device) as draw:
+		draw.rectangle((10,3,118,61), outline='white', fill='black')
+		draw.text((0,8),'       GOODNIGHT?      ','white')
+                #eyes
+		draw.rectangle((40,30,45,35), outline='black', fill='white')
+		draw.rectangle((83,30,88,35), outline='black', fill='white')
+                #mouth
+		draw.rectangle((40,45,88,50), outline='black', fill='white')
+                
+		run_cmd('sudo poweroff')
+                return
+	elif GPIO.event_detected(key['key1']):
+            return
+
+def is_connected():
+  return usb.core.find(idVendor=VENDOR, idProduct=PRODUCT) is not None
+
+
+def Initgpio():
+
+	verboseprint('Initializing GPIO')
+	GPIO.setmode(GPIO.BCM)
+
+	GPIO.setup(key['key1'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['key2'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['key3'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+	GPIO.setup(key['left'],  GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['up'],    GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['press'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['down'],  GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(key['right'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	
+	#LIPO LOW BATTERY
+	GPIO.setup(lowBat, GPIO.IN,pull_up_down=GPIO.PUD_UP) # figure this out...?
+
+	GPIO.add_event_detect(key['key1'],  GPIO.FALLING)
+	GPIO.add_event_detect(key['key2'],  GPIO.FALLING, bouncetime=300)
+	GPIO.add_event_detect(key['key3'],  GPIO.FALLING, bouncetime=300)
+	GPIO.add_event_detect(key['left'],  GPIO.FALLING, bouncetime=300)
+	GPIO.add_event_detect(key['up'],    GPIO.FALLING, bouncetime=300)
+	GPIO.add_event_detect(key['press'], GPIO.FALLING, bouncetime=300)
+	GPIO.add_event_detect(key['down'],  GPIO.FALLING, bouncetime=300)
+	GPIO.add_event_detect(key['right'], GPIO.FALLING, bouncetime=300)
+
+def DrawSplash(device):
+	with canvas(device) as draw:
+		draw.rectangle((18,12,108,52), outline='white', fill='black')
+		draw.text((0,16),'         RP1         ','white')
+		draw.text((0,38),'         ACE         ','white')
 
 # parse args and run the code!
 def main():
+
         parser = argparse.ArgumentParser()
         parser.add_argument('-v', '--verbose', action='count', 
                             help='print verbose log messages')
@@ -122,38 +214,44 @@ def main():
         global verboseprint
         verboseprint = v_print
 
-        # actual device operation, start on main menu here
-        # device=init()
-        # mlist=['tape deck', 'backup tape','sample packs','system info','shutdown']
-        # alist=['synth', 'drum',' ']
-        # listMenuScroll(device,mlist,alist,'MAIN',None,True,False) #no exit
-
+        # ##########################
         # there will be the main menu 
-        mainMenu = Menu("MAIN")
+        mainMenu = Menu("MAIN", exitable=False) ## don't let someone leave the main menu
 
         # and these will be entries in the menu
-        tapeDownMenu = Menu("MAIN>TAPES") # a menu that lists the tapes on the rpi, available for upload to the OP1
-        
+        backupTape   = Action("BACKUP", Placeholder) # entry that calls backup tapes function
+        tapeDownMenu = Menu("MAIN>TAPES") # a menu that lists the btapes on the rpi, available for upload to the OP1
+        samplesMenu  = Menu("MAIN>SAMPLES") # a menu that lists system entries, such as wifi, etc. 
+        sysMenu      = Menu("MAIN>SYS") # a menu that lists system entries, such as wifi, etc. 
+        shutdown     = Action("SHUTDOWN", Shutdown) # entry that calls backup tapes function
 
-['tape deck', 'backup tape','sample packs','system info','shutdown']
+        # add the entries to the menu, the order you add them is the order they're listed
+        mainMenu.addAction  ('backup tape' , backupTape)
+        mainMenu.addSubMenu ('tape deck'   , tapeDownMenu)
+        mainMenu.addSubMenu ('sample packs', samplesMenu)
+        mainMenu.addSubMenu ('system info' , sysMenu)
+        mainMenu.addAction  ('shutdown'    , shutdown)
     
-        menu1 = Menu()
-        menu1.addOption(1, "Option1", Option1, False)
-        menu1.addOption(2, "Return", Return, True)
-    
-        menu2 = Menu()
-        menu2.setPrompt("\nWhat would you like help with?")
-        menu2.addOption(1, "My life", MyLife, False)
-        menu2.addOption(2, "Getting help", GettingHelp, False)
-        menu2.addOption(3, "Return", Return, True)
-    
-        mainMenu.addOption(1, "Enter new values", menu1, False)
-        mainMenu.addOption(2, "Help", menu2, False)
-        mainMenu.addOption(3, "Exit", Exit, True)
-        mainMenu.run()  
+        # ##########################
+        # samples submenus
+        synthSamplesMenu = Menu("MAIN>SAMPLES>SYNTH") # a menu that lists system entries, such as wifi, etc.         
+        drumSamplesMenu  = Menu("MAIN>SAMPLES>DRUM") # a menu that lists system entries, such as wifi, etc.         
+        samplesMenu.addSubMenu('synth samples', synthSamplesMenu)
+        samplesMenu.addSubMenu('drum samples', drumSamplesMenu)
 
+        wifiInfo       = Action("WIFI", Placeholder) # entry that calls backup tapes function
+        reloadFirmware = Action("FIRMWARE", Placeholder) # entry that calls backup tapes function
+        sysMenu.addAction('wifi info', wifiInfo)
+        sysMenu.addAction('load firmware', reloadFirmware)
+        sysMenu.addAction('shutdown', shutdown)
+
+        # get everything going
+	serial = spi(device=0, port=0)
+	device = sh1106(serial,rotate=2)
+        drawSplash(device)
+        Initgpio()
+        mainMenu.display(device) # this should loop forever
 
 if __name__ == '__main__':
         main()
-
 
