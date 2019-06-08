@@ -81,7 +81,7 @@ class Menu:
 	
 	#menu
 	width = 100 #width of hilight
-	mlistc=['white']*len(mlist)
+	mlistc=['white']*self.size
 	if pos != 0: #setup cursor
 		mlistc[pos-1]='black'
 
@@ -112,20 +112,20 @@ class Menu:
 
                 # this highlights the currently selected item
 	        if pos != 0:
-		    draw.rectangle((xdist, pos*10+yoffset, xdist+width, (pos*10)+10+yoffset), outline='white', fill='white')
+		    draw.rectangle((xOffset, pos*10+yOffset, xOffset+width, (pos*10)+10+yOffset), outline='white', fill='white')
                 
                 # this draw the text for each entry in the menu
 	        for idx,line in enumerate(mlist):
-		    draw.text((xdist,(idx+1)*10+yoffset),line,mlistc[idx])
+		    draw.text((xOffset,(idx+1)*10+yOffset),line,mlistc[idx])
 
                 # what does this do
 	        if apos != 0:
 		    draw.rectangle((60,13,128,64), outline='black', fill='black')
 		    draw.rectangle((60,13,61,48), outline='white', fill='white')
-		    draw.rectangle((axdist, apos*10+yoffset, axdist+width, (apos*10)+10+yoffset), outline='white', fill='white')
+		    draw.rectangle((axdist, apos*10+yOffset, axdist+width, (apos*10)+10+yOffset), outline='white', fill='white')
 		    for idx,line in enumerate(alist):
 		        #print('idx: ',idx,'line: ',line,'fill: ',flist[idx])
-		        draw.text((axdist,(idx+1)*10+yoffset),line,alistc[idx])
+		        draw.text((axdist,(idx+1)*10+yOffset),line,alistc[idx])
 
 
 class Action: 
