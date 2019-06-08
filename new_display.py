@@ -56,10 +56,12 @@ class Menu:
     def addAction(self, actionName, action):
         # add a check here to make sure 'action' is an Action
          self.entries[actionName] = action
+         print(actionName)
 
     def addSubMenu(self, menuName, menu):
         # add a check here to make sure 'entry' is of type Menu
         self.entries[menuName] = menu
+        print(menuName)
 
     # Returns the number of options in this Menu
     def size(self):
@@ -115,9 +117,9 @@ class Menu:
             print(self.size())
             print("----------------------")
             #currFiveEntries = [entry for entry in self.entries.values()[self.currTop:self.currTop+5]]
-            currFiveEntries = {k: self.entries[k] for k in sorted(self.entries.keys())[self.currTop:self.currTop+5]}
-	    #for ind, entry in enumerate(self.entries.items()):
-	    for ind, entry in enumerate(currFiveEntries):
+            #currFiveEntries = {k: self.entries[k] for k in sorted(self.entries.keys())[self.currTop:self.currTop+5]}
+	    for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
+	    #for ind, entry in enumerate(currFiveEntries):
                 entryName = entry[0]
 	        draw.text((xOffset,(ind+1)*10+yOffset), entryName, mlistc[ind])
                 ind = ind+1
@@ -147,6 +149,9 @@ class Menu:
                     self.currTop = self.size()-5
                     
                 return
+            
+        # needs to be an exit condition somewhere...
+        self.display(device) # recursion
   
 
 class Action: 
