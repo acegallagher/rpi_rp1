@@ -10,6 +10,7 @@ from luma.core.interface.serial import spi
 from luma.core.render           import canvas
 from luma.oled.device           import sh1106
 from subprocess                 import *
+from collections                import OrderedDict
 
 # there are two terms you're using
 # 1: menu    -- menu entries that get displayed as a list on the screen 
