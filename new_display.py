@@ -46,10 +46,12 @@ class Menu:
 
     # Constructor
     def __init__(self, _name, _exitable=True):
-        self.entries  = {} 
-        self.name     = _name 
-        self.exitable = _exitable
-        self.pos      = 0 # current selected entry
+        self.entries      = {} 
+        self.name         = _name 
+        self.currSelected = 0 # current selected entry
+        self.currTop      = 0 # current entry at top of menu
+        self.exitable     = _exitable
+
 
     def addAction(self, actionName, action):
         # add a check here to make sure 'action' is an Action
@@ -61,7 +63,7 @@ class Menu:
 
     # Returns the number of options in this Menu
     def size(self):
-         return len(self.entries)
+        return len(self.entries)
 
     # Prints the Menu in its entirety
     def log(self):
@@ -80,49 +82,71 @@ class Menu:
 	xOffset = 5 
 	yOffset = 4
 	
-	#menu
-	width = 100 #width of hilight
+	width = 100 # width of hilight?
 	mlistc=['white']*10
 	if self.pos != 0: #setup cursor
 		mlistc[self.pos]='black'
 
 	#action menu
 	axdist=64
-	#alistc=['white']*len(alist)
 
-        while True:
-	    with canvas(device) as draw:
+	with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
 
-	        # draw header/title
-	        draw.rectangle((0,0,128,12), outline='white', fill='white')
-                draw.text((2,0), self.name, 'black')
+	    # draw header/title
+	    draw.rectangle((0,0,128,12), outline='white', fill='white')
+            draw.text((2,0), self.name, 'black')
 
-	        # draw OP1 status marker in top corner 
-	        if is_connected()==1:
-		    draw.rectangle((116,2,124,10), outline='black', fill='black')
-	        else:
-		    draw.rectangle((116,2,124,10), outline='black', fill='white')
+	    if is_connected()==1: # draw OP1 status marker in top corner 
+		draw.rectangle((116,2,124,10), outline='black', fill='black')
+	    else:
+		draw.rectangle((116,2,124,10), outline='black', fill='white')
 
-                # it would be nice to eventually have a battery indicator
-	        # if GPIO.event_detected(lowBat):
- 	        # 	draw.rectangle((96,3,108,9), outline='black', fill='black')
-	        # else:
-	        # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
+            # it would be nice to eventually have a battery indicator, finish this at some point
+	    # if GPIO.event_detected(lowBat):
+ 	    # 	draw.rectangle((96,3,108,9), outline='black', fill='black')
+	    # else:
+	    # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
 
-                # this highlights the currently selected item
-	        if self.pos != 0:
-		    draw.rectangle((xOffset, self.pos*10+yOffset, xOffset+width, (self.pos*10)+10+yOffset), outline='white', fill='white')
-                
-                # this draw the text for each entry in the menu
-                print("----------------------")
-                print(self.size())
-                print("----------------------")
-	        for ind, entry in enumerate(self.entries.items()):
-                    entryName = entry[0]
-		    draw.text((xOffset,(ind+1)*10+yOffset), entryName, mlistc[ind])
-                    ind = ind+1
+            # this highlights the currently selected item
+	    if self.pos != 0:
+	        draw.rectangle((xOffset, self.pos*10+yOffset, xOffset+width, (self.pos*10)+10+yOffset), outline='white', fill='white')
             
-            time.sleep(0.5)
+            # this draw the text for each entry in the menu
+            print("----------------------")
+            print(self.size())
+            print("----------------------")
+            currFiveEntries = [entry for entry in self.entries.values()[currTop:currTop+5]]
+	    #for ind, entry in enumerate(self.entries.items()):
+	    for ind, entry in enumerate(currFiveEntries):
+                entryName = entry[0]
+	        draw.text((xOffset,(ind+1)*10+yOffset), entryName, mlistc[ind])
+                ind = ind+1
+
+        # check for user input and act accordingly (update menu, run action, etc)
+        while True:
+            time.sleep(0.05) # don't need to poll for keys that often
+
+	    if GPIO.event_detected(key['down']):
+		if self.currSelected < self.size(): # if not at the end of the menu entries
+                    self.currSelected += 1
+                    if self.currTop <= self.currSelected-5: # selected past current buffer, display next 5 entries
+                        self.currTop = self.currSelected
+                else:
+                    self.currSelected = 0 
+                    self.currTop = 0 
+                    
+                return # exit while loop which redraws the menu
+
+	    elif GPIO.event_detected(key['up']): 
+		if self.currSelected > 0: # if not at the top of the menu entries
+                    self.currSelected -= 1
+                    if self.currTop > self.currSelected: # selected past current buffer, display next 5 entries
+                        self.currTop = self.currSelected-5
+                else:
+                    self.currSelected = self.size()
+                    self.currTop = self.size()-5
+                    
+                return
 
 
 class Action: 
