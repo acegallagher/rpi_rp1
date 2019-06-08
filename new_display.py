@@ -50,9 +50,9 @@ class Menu:
         self.name     = _name 
         self.exitable = _exitable
 
-    def addAction(self, actionName, action, triggersExit):
+    def addAction(self, actionName, action):
         # add a check here to make sure 'action' is an Action
-         self.entries[self.size] = [actionName, action, triggersExit]
+         self.entries[self.size] = [actionName, action]
 
     def addSubMenu(self, menuName, menu):
         # add a check here to make sure 'entry' is of type Menu
@@ -216,7 +216,7 @@ def main():
 
         # ##########################
         # there will be the main menu 
-        mainMenu = Menu("MAIN", exitable=False) ## don't let someone leave the main menu
+        mainMenu = Menu("MAIN", _exitable=False) ## don't let someone leave the main menu
 
         # and these will be entries in the menu
         backupTape   = Action("BACKUP", Placeholder) # entry that calls backup tapes function
