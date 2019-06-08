@@ -46,7 +46,7 @@ class Menu:
 
     # Constructor
     def __init__(self, _name, _exitable=True):
-        self.entries      = {} 
+        self.entries      = OrderedDict()
         self.name         = _name 
         self.currSelected = 0 # current selected entry
         self.currTop      = 0 # current entry at top of menu
