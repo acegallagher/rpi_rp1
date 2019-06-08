@@ -53,11 +53,11 @@ class Menu:
 
     def addAction(self, actionName, action):
         # add a check here to make sure 'action' is an Action
-         self.entries[self.size] = [actionName, action]
+         self.entries[actionName] = action
 
     def addSubMenu(self, menuName, menu):
         # add a check here to make sure 'entry' is of type Menu
-        self.entries[self.size] = [menuName, menu, False]
+        self.entries[menuName] = menu
 
     # Returns the number of options in this Menu
     def size(self):
@@ -114,21 +114,15 @@ class Menu:
 		    draw.rectangle((xOffset, self.pos*10+yOffset, xOffset+width, (self.pos*10)+10+yOffset), outline='white', fill='white')
                 
                 # this draw the text for each entry in the menu
-	        for ind, (line) in enumerate(self.entries.items()):
-                    print(ind)
-                    print(line)
-
-		    draw.text((xOffset,(ind+1)*10+yOffset),line,mlistc[ind])
+                print("----------------------")
+                print(self.size())
+                print("----------------------")
+	        for ind, entry in enumerate(self.entries.items()):
+                    entryName = entry[0]
+		    draw.text((xOffset,(ind+1)*10+yOffset), entryName, mlistc[ind])
                     ind = ind+1
-
-                # what does this do
-	        # if apos != 0:
-		#     draw.rectangle((60,13,128,64), outline='black', fill='black')
-		#     draw.rectangle((60,13,61,48), outline='white', fill='white')
-		#     draw.rectangle((axdist, apos*10+yOffset, axdist+width, (apos*10)+10+yOffset), outline='white', fill='white')
-		#     for idx,line in enumerate(alist):
-		#         #print('idx: ',idx,'line: ',line,'fill: ',flist[idx])
-		#         draw.text((axdist,(idx+1)*10+yOffset),line,alistc[idx])
+            
+            time.sleep(0.5)
 
 
 class Action: 
