@@ -114,8 +114,10 @@ class Menu:
 		    draw.rectangle((xOffset, self.pos*10+yOffset, xOffset+width, (self.pos*10)+10+yOffset), outline='white', fill='white')
                 
                 # this draw the text for each entry in the menu
-	        for idx,line in enumerate(mlist):
+                idx = 0
+	        for line in enumerate(self.entries.items()):
 		    draw.text((xOffset,(idx+1)*10+yOffset),line,mlistc[idx])
+                    idx = idx+1
 
                 # what does this do
 	        # if apos != 0:
