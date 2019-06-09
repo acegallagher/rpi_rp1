@@ -170,7 +170,7 @@ class Menu:
 		if currItem[1].__class__.__name__=='Menu': # display submenu
 		    currItem[1].display(device)
 		else: # call function that entry describes
-		    currItem[1].run()
+		    currItem[1].run(device)
 		break
 
             elif GPIO.event_detected(key['key1']):
@@ -342,7 +342,7 @@ def main():
         tapeDownMenu = Menu("MAIN>TAPES") # a menu that lists the btapes on the rpi, available for upload to the OP1
         samplesMenu  = Menu("MAIN>SAMPLES") # a menu that lists system entries, such as wifi, etc. 
         sysMenu      = Menu("MAIN>SYS") # a menu that lists system entries, such as wifi, etc. 
-        shutdown     = Action("SHUTDOWN", Shutdown(device)) # entry that calls backup tapes function
+        shutdown     = Action("SHUTDOWN", Shutdown) # entry that calls backup tapes function
 
         # add the entries to the menu, the order you add them is the order they're listed
         mainMenu.addAction  ('backup tape' , backupTape)
