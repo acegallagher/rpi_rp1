@@ -71,12 +71,8 @@ class Menu:
     def display(self, device): # put this Menu onto the screen 
 
         # move these consts somewhere else that makes more sense
-	#offsets
 	xOffset = 10 
 	yOffset = 4
-	
-	mlistc=['white']*self.size()
-	mlistc[self.currSelected]='black'
 
 	with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
 
@@ -101,10 +97,13 @@ class Menu:
             # this draw the text for each entry in the menu
             #currFiveEntries = [entry for entry in self.entries.values()[self.currTop:self.currTop+5]]
             #currFiveEntries = {k: self.entries[k] for k in sorted(self.entries.keys())[self.currTop:self.currTop+5]}
+	    textColor = ['white']*self.size()
+	    textColor[self.currSelected] = 'black'
+	
 	    for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
 	    #for ind, entry in enumerate(currFiveEntries):
                 entryName = entry[0]
-	        draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, mlistc[ind+self.currTop])
+	        draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
 	        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
                 ind = ind+1
 
@@ -131,7 +130,7 @@ class Menu:
                     if self.currTop > self.currSelected: # selected past current buffer, display next 5 entries
                         self.currTop = self.currSelected
                 else:
-                    self.currSelected = 5
+                    self.currSelected = self.size()
                     self.currTop = self.size()-5
                     
                 break # exit loop and redraw menu
@@ -140,9 +139,10 @@ class Menu:
 	    elif GPIO.event_detected(key['key2']): # key2 is a selection, follow the action/submenu selected
                 currItem = self.entries.items()[self.currSelected]
 		if currItem[1].__class__.__name__=='Menu': # call function that entry describes
-                    print("menu")
+		    currItem[1].display(device)
 		else: # display submenu
-                    print("action")
+		    currItem[1]()
+		break
 
             elif GPIO.event_detected(key['key1']):
                 if self.exitable==True:
@@ -155,7 +155,6 @@ class Menu:
 	            time.sleep(2.0)
                     break
 
-            
         # needs to be an exit condition somewhere...
         self.display(device) # recursion
   
@@ -178,7 +177,7 @@ def Placeholder():
 
 def Shutdown():
 
-    print("\n powering off...") 
+    print("\n powering off...?") 
     drawText(device,['powering off?','','   1-cancel','   2-confirm'])
     while True:
 	if GPIO.event_detected(key['key2']): # 
@@ -263,7 +262,7 @@ def main():
         mainMenu.addSubMenu ('tape deck'   , tapeDownMenu)
         mainMenu.addSubMenu ('sample packs', samplesMenu)
         mainMenu.addSubMenu ('system info' , sysMenu)
-        mainMenu.addAction  ('shutdown'    , shutdown)
+        mainMenu.addAction  ('shutdown'    , Shutdown)
 	mainMenu.addAction  ('test'    , Placeholder)
     
         # ##########################
