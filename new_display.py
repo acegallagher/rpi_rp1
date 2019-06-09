@@ -249,14 +249,7 @@ def Shutdown(device):
     while True:
 	if GPIO.event_detected(key['key2']): # 
 	    with canvas(device) as draw:
-		draw.rectangle((10,3,118,61), outline='white', fill='black')
-		draw.text((0,8),'       GOODNIGHT?      ','white')
-                #eyes
-		draw.rectangle((40,30,45,35), outline='black', fill='white')
-		draw.rectangle((83,30,88,35), outline='black', fill='white')
-                #mouth
-		draw.rectangle((40,45,88,50), outline='black', fill='white')
-                
+                DrawText(device,['GOODNIGHT?'])
 		run_cmd('sudo poweroff')
                 return
 	elif GPIO.event_detected(key['key1']):
@@ -264,9 +257,9 @@ def Shutdown(device):
 # proposition user
 def DrawText(device, textList):
         totCharWidth = 22
-        strOne = ' '*int((totCharWidth - len(textList[0]))/2)
-        strTwo = ' '*int((totCharWidth - len(textList[1]))/2)
-        strThr = ' '*int((totCharWidth - len(textList[2]))/2)
+        strOne = ' '*int((totCharWidth - len(textList[0]))/2+1)
+        strTwo = ' '*int((totCharWidth - len(textList[1]))/2+1)
+        strThr = ' '*int((totCharWidth - len(textList[2]))/2+1)
         strOne = strOne + textList[0]
         strTwo = strTwo + textList[1]
         strThr = strThr + textList[2]
@@ -278,9 +271,9 @@ def DrawText(device, textList):
 	                draw.text((0,16), strOne, 'white')
 	                draw.text((0,38), strTwo,'white')
                 if len(textList) == 3:
-	                draw.text((0,16), strOne, 'white')
+	                draw.text((0,8), strOne, 'white')
 	                draw.text((0,27), strTwo, 'white')
-	                draw.text((0,38), strThr,'white')
+	                draw.text((0,46), strThr,'white')
 
 def Initgpio():
 
