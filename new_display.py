@@ -135,6 +135,7 @@ class Menu:
                 else:
                     self.currSelected = self.size()-1
                     self.currTop = self.size()-5
+                    if self.currTop < 0: self.currTop=0
                     
                 break # exit loop and redraw menu
 
