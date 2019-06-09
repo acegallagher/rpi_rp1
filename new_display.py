@@ -260,6 +260,9 @@ def DrawText(device, textList):
         strOneOff = int(64-len(textList[0])/22.*64)
         strTwoOff = int(64-len(textList[1])/22.*64)
         strThrOff = int(64-len(textList[2])/22.*64)
+        print(strOneOff)
+        print(strTwoOff)
+        print(strThrOff)
 
 	with canvas(device) as draw:
                 draw.rectangle((2,2,124,62), outline='white', fill='black')
