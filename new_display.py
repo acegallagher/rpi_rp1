@@ -123,8 +123,10 @@ class Menu:
                 ind = ind+1
 
         # check for user input and act accordingly (update menu, run action, etc)
+        # ... couldn't this be done using callbacks? might be weird with recursion
+        # ... I think doing it this way makes more sense
         while True:
-            time.sleep(0.01) # don't need to poll for keys that often
+            time.sleep(0.01) # don't need to poll for keys that often, high CPU without
 
 	    if GPIO.event_detected(key['down']):
 		if self.currSelected < self.size()-1: # if not at the end of the menu entries
@@ -147,6 +149,23 @@ class Menu:
                     self.currTop = self.size()-5
                     
                 break # exit loop and redraw menu
+
+            # MAKE THIS "OR RIGHT ARROW" TOO
+	    elif GPIO.event_detected(key['key2']): # key2 is a selection, follow the action/submenu selected
+                currItem = self.entries.items()[self.currSelected]
+                print("-----------------")
+                print(currItem[0])
+                print(currItem[1])
+                print("-----------------")
+		if currItem[0].__class__.__name__=='Menu': # call function that entry describes
+                    print("menu")
+		else: # display submenu
+                    print("action")
+
+	    #// EXIT STRATEGY
+            #elif GPIO.event_detected(key['key1']):
+            #if self.exitable==True:
+	    #return
             
         # needs to be an exit condition somewhere...
         self.display(device) # recursion
