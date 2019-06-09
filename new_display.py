@@ -257,9 +257,9 @@ def Shutdown(device):
 # proposition user
 def DrawText(device, textList):
         totCharWidth = 22
-        strOneOff = 64-len(textList[0])/22.*64
-        strTwoOff = 64-len(textList[1])/22.*64
-        strThrOff = 64-len(textList[2])/22.*64
+        strOneOff = int(64-len(textList[0])/22.*64)
+        strTwoOff = int(64-len(textList[1])/22.*64)
+        strThrOff = int(64-len(textList[2])/22.*64)
 
 	with canvas(device) as draw:
                 draw.rectangle((2,2,124,62), outline='white', fill='black')
