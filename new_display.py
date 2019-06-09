@@ -242,7 +242,7 @@ def WaitForKey(waitkey):
 def Placeholder():
     print("\n this function hasn't been implemented yet")
 
-def Shutdown():
+def Shutdown(device):
 
     print("\n powering off...?") 
     DrawText(device,['SHUTDOWN?', '1-CANCEL', '2-CONFIRM'])
@@ -261,12 +261,6 @@ def Shutdown():
                 return
 	elif GPIO.event_detected(key['key1']):
             return
-
-def DrawText(device,textlist):
-	with canvas(device) as draw:
-		for idx,text in enumerate(textlist):
-			#print text, ', ', idx
-			draw.text((0,idx*10),text,'white')
 
 def Initgpio():
 
@@ -315,6 +309,10 @@ def main():
         global verboseprint
         verboseprint = v_print
 
+        # get everything going
+	serial = spi(device=0, port=0)
+	device = sh1106(serial,rotate=2)
+
         # ##########################
         # there will be the main menu 
         mainMenu = Menu("MAIN", _exitable=False) ## don't let someone leave the main menu
@@ -324,7 +322,7 @@ def main():
         tapeDownMenu = Menu("MAIN>TAPES") # a menu that lists the btapes on the rpi, available for upload to the OP1
         samplesMenu  = Menu("MAIN>SAMPLES") # a menu that lists system entries, such as wifi, etc. 
         sysMenu      = Menu("MAIN>SYS") # a menu that lists system entries, such as wifi, etc. 
-        shutdown     = Action("SHUTDOWN", Shutdown) # entry that calls backup tapes function
+        shutdown     = Action("SHUTDOWN", Shutdown(device)) # entry that calls backup tapes function
 
         # add the entries to the menu, the order you add them is the order they're listed
         mainMenu.addAction  ('backup tape' , backupTape)
@@ -347,9 +345,6 @@ def main():
         sysMenu.addAction('load firmware', reloadFirmware)
         sysMenu.addAction('shutdown', shutdown)
 
-        # get everything going
-	serial = spi(device=0, port=0)
-	device = sh1106(serial,rotate=2)
         DrawSplash(device)
         Initgpio()
         mainMenu.display(device) # this should loop forever
