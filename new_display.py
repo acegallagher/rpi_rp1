@@ -261,6 +261,26 @@ def Shutdown(device):
                 return
 	elif GPIO.event_detected(key['key1']):
             return
+# proposition user
+def DrawText(device, textList):
+        totCharWidth = 22
+        strOne = ' '*(totCharWidth - len(textList[0]))/2
+        strTwo = ' '*(totCharWidth - len(textList[1]))/2
+        strThr = ' '*(totCharWidth - len(textList[2]))/2
+        strOne = strOne + textList[0]
+        strTwo = strTwo + textList[1]
+        strThr = strThr + textList[2]
+	with canvas(device) as draw:
+                draw.rectangle((2,2,124,62), outline='white', fill='black')
+                if len(textList) == 1:
+	                draw.text((0,27), strOne, 'white')
+                if len(textList) == 1:
+	                draw.text((0,16), strOne, 'white')
+	                draw.text((0,38), strTwo,'white')
+                if len(textList) == 3:
+	                draw.text((0,16), strOne, 'white')
+	                draw.text((0,27), strTwo, 'white')
+	                draw.text((0,38), strThr,'white')
 
 def Initgpio():
 
