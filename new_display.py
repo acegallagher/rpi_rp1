@@ -90,45 +90,49 @@ class Menu:
 	xOffset = 10 
 	yOffset = 4
 
-	with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
-	    self.drawHeader(device, draw)
-            if self.size() != 0: 
+        if self.size() != 0: 
 
+            with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
+        	self.drawHeader(device, draw)
                 pos = self.currSelected - self.currTop
-	        draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
-
+        	draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
+        
                 # this draw the text for each entry in the menu
-	        textColor = ['white']*self.size()
+        	textColor = ['white']*self.size()
                 textColor[self.currSelected] = 'black'
-	
-	        for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
+        	
+        	for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
                     entryName = entry[0]
-	            draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
-	            draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+        	    draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
+                    if textColor[self.currSelected] == 'black': # draw an arrow... finish this!
+                        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+                    else:
+                        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+        
+        else: # menu was empty, display warning... shouldn't happen often
+            currLoop = 0 
+            indOff  = 0 
+            while True:
+                time.sleep(0.01) # don't need to poll for keys that often, high CPU without
+                warnText = ['this', 'menu', 'is', 'empty', '...sorry...', 'press', 'key 1!']
+                if currLoop==0:
 
-	    else:
-                currLoop = 0 
-                indOff  = 0 
-                while True:
-                    time.sleep(0.01) # don't need to poll for keys that often, high CPU without
-                    warnText = ['this', 'menu', 'is', 'empty', '...sorry...', 'press', 'key 1!']
-                    if currLoop==0:
-			print("--------------------------")
-			with canvas(device) as draw:
-			    self.drawHeader(device,draw)
-			    dispInd = 0 
-	                    for textInd in range(indOff,indOff+5):
-                            	if textInd > len(warnText)-1: textInd = textInd - len(warnText)
-	    	            	print("... looping... %s -- %s" % (warnText[textInd],textInd))
-                            	draw.text((xOffset+2,(dispInd+1)*10+yOffset), warnText[textInd], "white")
-		            	draw.rectangle((2, (dispInd+1)*10+8, 5, ((dispInd+1)*10)+10), outline='white', fill='white')
-				dispInd +=1	
+		    with canvas(device) as draw:
+			self.drawHeader(device,draw)
+			dispInd = 0 
+	                for textInd in range(indOff,indOff+5):
+                            if textInd > len(warnText)-1: textInd = textInd - len(warnText)
+	    	            print("... looping... %s -- %s" % (warnText[textInd],textInd))
+                            draw.text((xOffset+2,(dispInd+1)*10+yOffset), warnText[textInd], "white")
+		            draw.rectangle((2, (dispInd+1)*10+8, 5, ((dispInd+1)*10)+10), outline='white', fill='white')
+			    dispInd +=1	
 				
-                        indOff  += 1 
-                    if indOff == len(warnText): indOff = 0
-                    if GPIO.event_detected(key['key1']): return
-                    currLoop += 1 
-		    if currLoop == 75: currLoop = 0
+                    indOff  += 1 
+                currLoop += 1 
+                if indOff == len(warnText): indOff = 0
+		if currLoop == 75: currLoop = 0
+                if GPIO.event_detected(key['key1']): return
+
 	
         # check for user input and act accordingly (update menu, run action, etc)
         # ... couldn't this be done using callbacks? might be weird with recursion
