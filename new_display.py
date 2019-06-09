@@ -91,24 +91,23 @@ class Menu:
 	    # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
 
             # highlight the currently selected item
+            if self.size() == 0: 
+                text = ['this', 'menu', 'is', 'empty', '...sorry']
+	        for ind in range(0,4):
+                    draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
+                break
+
             pos = self.currSelected-self.currTop
 	    draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
             
             # this draw the text for each entry in the menu
-            #currFiveEntries = [entry for entry in self.entries.values()[self.currTop:self.currTop+5]]
-            #currFiveEntries = {k: self.entries[k] for k in sorted(self.entries.keys())[self.currTop:self.currTop+5]}
 	    textColor = ['white']*self.size()
-	    textColor[self.currSelected] = 'black'
+            textColor[self.currSelected] = 'black'
 	
 	    for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
-	    #for ind, entry in enumerate(currFiveEntries):
                 entryName = entry[0]
 	        draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
 	        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
-
-                # draw.text((xOffset,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
-	        # draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
-                ind = ind+1
 
         # check for user input and act accordingly (update menu, run action, etc)
         # ... couldn't this be done using callbacks? might be weird with recursion
@@ -116,6 +115,10 @@ class Menu:
         while True:
             time.sleep(0.01) # don't need to poll for keys that often, high CPU without
 
+            if self.size() == 0: 
+		wait(keys,'key1')
+                break
+                
 	    if GPIO.event_detected(key['down']):
 		if self.currSelected < self.size()-1: # if not at the end of the menu entries
                     self.currSelected += 1
@@ -176,6 +179,44 @@ class Action:
     def run(self): 
         self.action()
 
+# SYSTEM UTILITIES                                        
+# def run_cmd(cmd):
+# 	p = Popen(cmd, shell=True, stdout=PIPE)
+# 	output = p.communicate()[0]
+# 	return output
+
+def IsConnected():
+  return usb.core.find(idVendor=VENDOR, idProduct=PRODUCT) is not None
+
+def GetMountPath():
+  o = os.popen('readlink -f /dev/disk/by-id/' + USBID_OP1).read()
+  if USBID_OP1 in o:
+    raise RuntimeError('Error getting OP-1 mount path: {}'.format(o))
+  else:
+    return o.rstrip()
+
+def MountDevice(source, target, fs, options=''):
+  ret = os.system('mount {} {}'.format(source, target))
+  if ret not in (0, 8192):
+    raise RuntimeError('Error mounting {} on {}: {}'.format(source, target, ret))
+
+def UnmountDevice(target):
+  ret = os.system('umount {}'.format(target))
+  if ret != 0:
+    raise RuntimeError('Error unmounting {}: {}'.format(target, ret))
+
+def ForceDir(path):
+  if not os.path.isdir(path):
+    os.makedirs(path)
+
+# waits for a keypress 
+def WaitForKey(keys, waitkey):
+	while True:
+		if GPIO.event_detected(key[waitkey]):
+                        print(waitkey)
+                        return
+		time.sleep(.01)
+
 def Placeholder():
     print("\n this function hasn't been implemented yet")
 
@@ -198,9 +239,6 @@ def Shutdown():
                 return
 	elif GPIO.event_detected(key['key1']):
             return
-
-def is_connected():
-  return usb.core.find(idVendor=VENDOR, idProduct=PRODUCT) is not None
 
 
 def Initgpio():
