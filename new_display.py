@@ -151,20 +151,20 @@ class Menu:
             # MAKE THIS "OR RIGHT ARROW" TOO
 	    elif GPIO.event_detected(key['key2']): # key2 is a selection, follow the action/submenu selected
                 currItem = self.entries.items()[self.currSelected]
-                print("-----------------")
-                print(currItem[0])
-                print(currItem[1])
-                print("-----------------")
-                print("currItem[0].__class__.__name__")
-		if currItem[0].__class__.__name__=='Menu': # call function that entry describes
+		if currItem[1].__class__.__name__=='Menu': # call function that entry describes
                     print("menu")
 		else: # display submenu
                     print("action")
 
-	    #// EXIT STRATEGY
-            #elif GPIO.event_detected(key['key1']):
-            #if self.exitable==True:
-	    #return
+            elif GPIO.event_detected(key['key1']):
+                if self.exitable==True:
+	            return
+                else:
+	            with canvas(device) as draw:
+	                draw.rectangle((18,12,108,52), outline='white', fill='black')
+	                draw.text((0,16),'       I'M SORRY         ','white')
+	                draw.text((0,38),"    I CAN\'T DO THAT      ",'white')
+	    time.sleep(2.0)
             
         # needs to be an exit condition somewhere...
         self.display(device) # recursion
