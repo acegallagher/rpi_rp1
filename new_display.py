@@ -67,6 +67,22 @@ class Menu:
         for i in range(1, self.size()+1):
             print("{} - {}".format( i, self.entries[i][0] ))
         print()
+	
+    def drawHeader(self, device, draw): # draw title and notifiers
+	print("made it there... %s" % self.name)
+	draw.rectangle((0,0,128,12), outline='white', fill='white')	    # draw header/title
+	draw.text((2,0), self.name, 'black')
+	if IsConnected()==1: # draw OP1 status marker in top corner 
+	    draw.rectangle((116,2,124,10), outline='black', fill='black')
+	else:
+	    draw.rectangle((116,2,124,10), outline='black', fill='white')
+
+            # it would be nice to eventually have a battery indicator, finish this at some point
+	    # if GPIO.event_detected(lowBat):
+ 	    # 	draw.rectangle((96,3,108,9), outline='black', fill='black')
+	    # else:
+	    # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
+		
 
     def display(self, device): # put this Menu onto the screen 
 
@@ -75,39 +91,9 @@ class Menu:
 	yOffset = 4
 
 	with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
-	    print("made it there... %s" % self.name)
-	    draw.rectangle((0,0,128,12), outline='white', fill='white')	    # draw header/title
-            draw.text((2,0), self.name, 'black')
+	    self.drawHeader(device, draw)
+            if self.size() != 0: 
 
-	    if IsConnected()==1: # draw OP1 status marker in top corner 
-		draw.rectangle((116,2,124,10), outline='black', fill='black')
-	    else:
-		draw.rectangle((116,2,124,10), outline='black', fill='white')
-
-            # it would be nice to eventually have a battery indicator, finish this at some point
-	    # if GPIO.event_detected(lowBat):
- 	    # 	draw.rectangle((96,3,108,9), outline='black', fill='black')
-	    # else:
-	    # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
-
-            if self.size() == 0: 
-                currLoop = 0 
-                dispInd  = 0 
-                while True:
-                    time.sleep(0.01) # don't need to poll for keys that often, high CPU without
-                    warnText = ['this', 'menu', 'is', 'empty', '...sorry...', 'press', 'key 1!']
-                    if currLoop==50:
-	                for ind in range(dispInd,dispInd+5):
-	    	            print("... looping... %s" % warnText[ind])
-                            if ind > len(warnText)-1: ind = ind - len(warnText)
-                            draw.text((xOffset+2,(ind+1)*10+yOffset), warnText[dispnd], "white")
-		            draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
-                        dispInd  += 1 
-                        currLoop = 0
-                    if dispInd == 7: dispInd = 0
-                    if GPIO.event_detected(key['key1']): return
-                    currLoop += 1 
-            else:
                 pos = self.currSelected - self.currTop
 	        draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
 
@@ -120,10 +106,30 @@ class Menu:
 	            draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
 	            draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
 
-	if self.size() == 0: 
-	    print("waiting...")
-            return
-
+	    else:
+                currLoop = 0 
+                indOff  = 0 
+                while True:
+                    time.sleep(0.01) # don't need to poll for keys that often, high CPU without
+                    warnText = ['this', 'menu', 'is', 'empty', '...sorry...', 'press', 'key 1!']
+                    if currLoop==0:
+			print("--------------------------")
+			with canvas(device) as draw:
+			    self.drawHeader(device,draw)
+			    dispInd = 0 
+	                    for textInd in range(indOff,indOff+5):
+                            	if textInd > len(warnText)-1: textInd = textInd - len(warnText)
+	    	            	print("... looping... %s -- %s" % (warnText[textInd],textInd))
+                            	draw.text((xOffset+2,(dispInd+1)*10+yOffset), warnText[textInd], "white")
+		            	draw.rectangle((2, (dispInd+1)*10+8, 5, ((dispInd+1)*10)+10), outline='white', fill='white')
+				dispInd +=1	
+				
+                        indOff  += 1 
+                    if indOff == len(warnText): indOff = 0
+                    if GPIO.event_detected(key['key1']): return
+                    currLoop += 1 
+		    if currLoop == 75: currLoop = 0
+	
         # check for user input and act accordingly (update menu, run action, etc)
         # ... couldn't this be done using callbacks? might be weird with recursion
         # ... I think doing it this way makes more sense
