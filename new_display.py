@@ -161,10 +161,12 @@ class Menu:
 	            return
                 else:
 	            with canvas(device) as draw:
-	                draw.rectangle((18,12,108,52), outline='white', fill='black')
-	                draw.text((0,16),'       I'M SORRY         ','white')
-	                draw.text((0,38),"    I CAN\'T DO THAT      ",'white')
-	    time.sleep(2.0)
+	                draw.rectangle((9,6,117,58), outline='white', fill='black')
+	                draw.text((0,16),"       I'M SORRY         ",'white')
+	                draw.text((0,38),"    I CAN'T DO THAT      ",'white')
+	            time.sleep(2.0)
+                    break
+
             
         # needs to be an exit condition somewhere...
         self.display(device) # recursion
