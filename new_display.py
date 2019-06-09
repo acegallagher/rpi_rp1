@@ -264,14 +264,14 @@ def DrawText(device, textList):
 	with canvas(device) as draw:
                 draw.rectangle((2,2,124,62), outline='white', fill='black')
                 if len(textList) == 1:
-	                draw.text((strOneOff,27), strOne, 'white')
+ 	                draw.text((strOneOff,27) , textList[0], 'white')
                 if len(textList) == 1:
-	                draw.text((strOneOff,16), strOne, 'white')
-	                draw.text((strTwoOff,38), strTwo,'white')
+	                draw.text((strOneOff,16) , textList[0] , 'white')
+	                draw.text((strTwoOff,38) , textList[1] , 'white')
                 if len(textList) == 3:
-	                draw.text((strOneOff,8), strOne, 'white')
-	                draw.text((strOneOff,27), strTwo, 'white')
-	                draw.text((strOneOff,46), strThr,'white')
+	                draw.text((strOneOff,8)  , textList[0] , 'white')
+	                draw.text((strOneOff,27) , textList[1] , 'white')
+	                draw.text((strOneOff,46) , textList[2] , 'white')
 
 def Initgpio():
 
