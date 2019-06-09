@@ -86,7 +86,7 @@ class Menu:
 	yOffset = 4
 	
 	width = 100 # width of hilight?
-	mlistc=['white']*10
+	mlistc=['white']*self.size()
 	mlistc[self.currSelected]='black'
 
 	#action menu
@@ -110,30 +110,27 @@ class Menu:
 	    # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
 
             # highlight the currently selected item
-            pos = self.currSelected
-	    draw.rectangle((xOffset, pos*10+yOffset, xOffset+width, (pos*10)+10+yOffset), outline='white', fill='white')
+            pos = self.currSelected-self.currTop
+	    draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+width, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
             
             # this draw the text for each entry in the menu
-            print("----------------------")
-            print(self.size())
-            print("----------------------")
             #currFiveEntries = [entry for entry in self.entries.values()[self.currTop:self.currTop+5]]
             #currFiveEntries = {k: self.entries[k] for k in sorted(self.entries.keys())[self.currTop:self.currTop+5]}
 	    for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
 	    #for ind, entry in enumerate(currFiveEntries):
                 entryName = entry[0]
-	        draw.text((xOffset,(ind+1)*10+yOffset), entryName, mlistc[ind])
+	        draw.text((xOffset,(ind+1)*10+yOffset), entryName, mlistc[ind+self.currTop])
                 ind = ind+1
 
         # check for user input and act accordingly (update menu, run action, etc)
         while True:
-            time.sleep(0.05) # don't need to poll for keys that often
+            time.sleep(0.01) # don't need to poll for keys that often
 
 	    if GPIO.event_detected(key['down']):
-		if self.currSelected < self.size(): # if not at the end of the menu entries
+		if self.currSelected < self.size()-1: # if not at the end of the menu entries
                     self.currSelected += 1
                     if self.currTop <= self.currSelected-5: # selected past current buffer, display next 5 entries
-                        self.currTop = self.currSelected
+                        self.currTop = self.currSelected-4
                 else:
                     self.currSelected = 0 
                     self.currTop = 0 
@@ -144,9 +141,9 @@ class Menu:
 		if self.currSelected > 0: # if not at the top of the menu entries
                     self.currSelected -= 1
                     if self.currTop > self.currSelected: # selected past current buffer, display next 5 entries
-                        self.currTop = self.currSelected-5
+                        self.currTop = self.currSelected
                 else:
-                    self.currSelected = self.size()
+                    self.currSelected = 5
                     self.currTop = self.size()-5
                     
                 break # exit loop and redraw menu
@@ -259,6 +256,7 @@ def main():
         mainMenu.addSubMenu ('sample packs', samplesMenu)
         mainMenu.addSubMenu ('system info' , sysMenu)
         mainMenu.addAction  ('shutdown'    , shutdown)
+	mainMenu.addAction  ('test'    , Placeholder)
     
         # ##########################
         # samples submenus
