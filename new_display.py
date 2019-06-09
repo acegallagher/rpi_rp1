@@ -72,7 +72,7 @@ class Menu:
 
         # move these consts somewhere else that makes more sense
 	#offsets
-	xOffset = 5 
+	xOffset = 10 
 	yOffset = 4
 	
 	mlistc=['white']*self.size()
@@ -104,8 +104,8 @@ class Menu:
 	    for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
 	    #for ind, entry in enumerate(currFiveEntries):
                 entryName = entry[0]
-	        draw.text((xOffset,(ind+1)*10+yOffset), entryName, mlistc[ind+self.currTop])
-	        draw.rectangle((2, (pos+1)*10+yOffset, 5, ((pos+1)*10)+10+yOffset), outline='white', 
+	        draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, mlistc[ind+self.currTop])
+	        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
                 ind = ind+1
 
         # check for user input and act accordingly (update menu, run action, etc)
