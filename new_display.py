@@ -74,12 +74,12 @@ class Menu:
 	xOffset = 10 
 	yOffset = 4
 
-	with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
-
+	with fragile(canvas(device)) as draw: # draw the menu with the current five entries and the highlighted entry
+	    print("made it there... %s" % self.name)
 	    draw.rectangle((0,0,128,12), outline='white', fill='white')	    # draw header/title
             draw.text((2,0), self.name, 'black')
 
-	    if is_connected()==1: # draw OP1 status marker in top corner 
+	    if IsConnected()==1: # draw OP1 status marker in top corner 
 		draw.rectangle((116,2,124,10), outline='black', fill='black')
 	    else:
 		draw.rectangle((116,2,124,10), outline='black', fill='white')
@@ -92,10 +92,12 @@ class Menu:
 
             # highlight the currently selected item
             if self.size() == 0: 
-                text = ['this', 'menu', 'is', 'empty', '...sorry']
+		print("made it here...")
+                text = ['this', 'menu', 'is', 'empty', '...sorry... press key 1!']
 	        for ind in range(0,4):
-                    draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
-                break
+                    draw.text((xOffset+2,(ind+1)*10+yOffset), text[ind], "white")
+		    draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+	 	raise fragile.Break
 
             pos = self.currSelected-self.currTop
 	    draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
@@ -116,8 +118,8 @@ class Menu:
             time.sleep(0.01) # don't need to poll for keys that often, high CPU without
 
             if self.size() == 0: 
-		wait(keys,'key1')
-                break
+		WaitForKey('key1')
+                return
                 
 	    if GPIO.event_detected(key['down']):
 		if self.currSelected < self.size()-1: # if not at the end of the menu entries
@@ -210,7 +212,7 @@ def ForceDir(path):
     os.makedirs(path)
 
 # waits for a keypress 
-def WaitForKey(keys, waitkey):
+def WaitForKey(waitkey):
 	while True:
 		if GPIO.event_detected(key[waitkey]):
                         print(waitkey)
@@ -240,6 +242,23 @@ def Shutdown():
 	elif GPIO.event_detected(key['key1']):
             return
 
+# makes breaking out of a 'with' possible... a bit clunky
+# https://stackoverflow.com/questions/11195140/break-or-exit-out-of-with-statement
+class fragile(object):
+    class Break(Exception):
+      """Break out of the with statement"""
+
+    def __init__(self, value):
+        self.value = value
+
+    def __enter__(self):
+        return self.value.__enter__()
+
+    def __exit__(self, etype, value, traceback):
+        error = self.value.__exit__(etype, value, traceback)
+        if etype == self.Break:
+            return True
+        return error	
 
 def Initgpio():
 
