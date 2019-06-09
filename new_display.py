@@ -53,7 +53,7 @@ class Menu:
         self.currTop      = 0 # current entry at top of menu
         self.exitable     = _exitable
 
-
+    # these can probably be combined into add entry, and then do a try:except when you actually call the thing
     def addAction(self, actionName, action):
         # add a check here to make sure 'action' is an Action
          self.entries[actionName] = action
@@ -138,7 +138,7 @@ class Menu:
                     self.currSelected = 0 
                     self.currTop = 0 
                     
-                return # exit while loop which redraws the menu
+                break # exit while loop which redraws the menu
 
 	    elif GPIO.event_detected(key['up']): 
 		if self.currSelected > 0: # if not at the top of the menu entries
@@ -149,7 +149,7 @@ class Menu:
                     self.currSelected = self.size()
                     self.currTop = self.size()-5
                     
-                return
+                break # exit loop and redraw menu
             
         # needs to be an exit condition somewhere...
         self.display(device) # recursion
