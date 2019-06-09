@@ -264,9 +264,9 @@ def Shutdown(device):
 # proposition user
 def DrawText(device, textList):
         totCharWidth = 22
-        strOne = ' '*(totCharWidth - len(textList[0]))/2
-        strTwo = ' '*(totCharWidth - len(textList[1]))/2
-        strThr = ' '*(totCharWidth - len(textList[2]))/2
+        strOne = ' '*int((totCharWidth - len(textList[0]))/2)
+        strTwo = ' '*int((totCharWidth - len(textList[1]))/2)
+        strThr = ' '*int((totCharWidth - len(textList[2]))/2)
         strOne = strOne + textList[0]
         strTwo = strTwo + textList[1]
         strThr = strThr + textList[2]
