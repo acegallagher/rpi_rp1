@@ -257,9 +257,14 @@ def Shutdown(device):
 # proposition user
 def DrawText(device, textList):
         totCharWidth = 22
+        # left aligned but centered
         strOneOff = int(64-len(textList[0])/22.*64)
         strTwoOff = int(64-len(textList[1])/22.*64)
         strThrOff = int(64-len(textList[2])/22.*64)
+        #actually centered
+        strOneOff = int((128-len(textList[0])/22.*128)/2)
+        strTwoOff = int((128-len(textList[1])/22.*128)/2)
+        strThrOff = int((128-len(textList[2])/22.*128)/2)
         print(strOneOff)
         print(strTwoOff)
         print(strThrOff)
