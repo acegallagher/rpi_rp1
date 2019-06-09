@@ -245,7 +245,7 @@ def Placeholder():
 def Shutdown():
 
     print("\n powering off...?") 
-    drawText(device,['powering off?','','   1-cancel','   2-confirm'])
+    DrawText(device,['SHUTDOWN?', '1-CANCEL', '2-CONFIRM'])
     while True:
 	if GPIO.event_detected(key['key2']): # 
 	    with canvas(device) as draw:
@@ -261,6 +261,12 @@ def Shutdown():
                 return
 	elif GPIO.event_detected(key['key1']):
             return
+
+def DrawText(device,textlist):
+	with canvas(device) as draw:
+		for idx,text in enumerate(textlist):
+			#print text, ', ', idx
+			draw.text((0,idx*10),text,'white')
 
 def Initgpio():
 
@@ -325,7 +331,7 @@ def main():
         mainMenu.addSubMenu ('tape deck'   , tapeDownMenu)
         mainMenu.addSubMenu ('sample packs', samplesMenu)
         mainMenu.addSubMenu ('system info' , sysMenu)
-        mainMenu.addAction  ('shutdown'    , Shutdown)
+        mainMenu.addAction  ('shutdown'    , shutdown)
 	#mainMenu.addAction  ('test'    , Placeholder)
     
         # ##########################
