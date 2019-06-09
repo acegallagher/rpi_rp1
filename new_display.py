@@ -1,11 +1,8 @@
 from __future__ import print_function # the future is now, and it is good
-
 import time, os, datetime, argparse
-
 import RPi.GPIO as GPIO
 import shutil   as sh
 import usb.core
-
 from luma.core.interface.serial import spi
 from luma.core.render           import canvas
 from luma.oled.device           import sh1106
@@ -16,7 +13,7 @@ from collections                import OrderedDict
 # 1: menu    -- menu entries that get displayed as a list on the screen 
 # 2: actions -- menu entries that call functions to complete tasks (i.e  backing up the tape)
 
-#GLOBALS
+# GLOBALS
 lowBat      = 4
 VENDOR      = 0x2367
 PRODUCT     = 0x0002
@@ -27,7 +24,7 @@ USBID_OP1   = '*Teenage_OP-1*'
 
 OP1_PATH = MOUNT_DIR
 
-#KEYS
+# BUTTONS
 key={}
 key['key1'] = 21 # used as 'go back' key 
 key['key2'] = 20 # used as 'select item' key
@@ -45,7 +42,6 @@ nTracks    = len(trackList)
 
 class Menu:
 
-    # Constructor
     def __init__(self, _name, _exitable=True):
         self.entries      = OrderedDict()
         self.name         = _name 
@@ -62,38 +58,29 @@ class Menu:
         # add a check here to make sure 'entry' is of type Menu
         self.entries[menuName] = menu
 
-    # Returns the number of options in this Menu
-    def size(self):
+    def size(self): # returns the number of options in this Menu
         return len(self.entries)
 
-    # Prints the Menu in its entirety
+    # prints the Menu in its entirety -- not used.........
     def log(self):
         print(self.name)
         for i in range(1, self.size()+1):
             print("{} - {}".format( i, self.entries[i][0] ))
         print()
 
-
-    # Runs this Menu
-    def display(self, device):
+    def display(self, device): # put this Menu onto the screen 
 
         # move these consts somewhere else that makes more sense
-
 	#offsets
 	xOffset = 5 
 	yOffset = 4
 	
-	width = 100 # width of hilight?
 	mlistc=['white']*self.size()
 	mlistc[self.currSelected]='black'
 
-	#action menu
-	axdist=64
-
 	with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
 
-	    # draw header/title
-	    draw.rectangle((0,0,128,12), outline='white', fill='white')
+	    draw.rectangle((0,0,128,12), outline='white', fill='white')	    # draw header/title
             draw.text((2,0), self.name, 'black')
 
 	    if is_connected()==1: # draw OP1 status marker in top corner 
@@ -109,7 +96,7 @@ class Menu:
 
             # highlight the currently selected item
             pos = self.currSelected-self.currTop
-	    draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+width, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
+	    draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
             
             # this draw the text for each entry in the menu
             #currFiveEntries = [entry for entry in self.entries.values()[self.currTop:self.currTop+5]]
@@ -118,6 +105,7 @@ class Menu:
 	    #for ind, entry in enumerate(currFiveEntries):
                 entryName = entry[0]
 	        draw.text((xOffset,(ind+1)*10+yOffset), entryName, mlistc[ind+self.currTop])
+	        draw.rectangle((2, (pos+1)*10+yOffset, 5, ((pos+1)*10)+10+yOffset), outline='white', 
                 ind = ind+1
 
         # check for user input and act accordingly (update menu, run action, etc)
@@ -162,8 +150,8 @@ class Menu:
                 else:
 	            with canvas(device) as draw:
 	                draw.rectangle((9,6,117,58), outline='white', fill='black')
-	                draw.text((0,16),"       I'M SORRY         ",'white')
-	                draw.text((0,38),"    I CAN'T DO THAT      ",'white')
+	                draw.text((0,16),"      I'M SORRY         ",'white')
+	                draw.text((0,38),"   I CAN'T DO THAT      ",'white')
 	            time.sleep(2.0)
                     break
 
