@@ -74,7 +74,7 @@ class Menu:
 	xOffset = 10 
 	yOffset = 4
 
-	with fragile(canvas(device)) as draw: # draw the menu with the current five entries and the highlighted entry
+	with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
 	    print("made it there... %s" % self.name)
 	    draw.rectangle((0,0,128,12), outline='white', fill='white')	    # draw header/title
             draw.text((2,0), self.name, 'black')
@@ -90,36 +90,46 @@ class Menu:
 	    # else:
 	    # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
 
-            # highlight the currently selected item
             if self.size() == 0: 
-		print("made it here...")
-                text = ['this', 'menu', 'is', 'empty', '...sorry... press key 1!']
-	        for ind in range(0,4):
-                    draw.text((xOffset+2,(ind+1)*10+yOffset), text[ind], "white")
-		    draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
-	 	raise fragile.Break
+                currLoop = 0 
+                dispInd  = 0 
+                while True:
+                    time.sleep(0.01) # don't need to poll for keys that often, high CPU without
+                    warnText = ['this', 'menu', 'is', 'empty', '...sorry...', 'press', 'key 1!']
+                    if currLoop==50:
+	                for ind in range(dispInd,dispInd+5):
+	    	            print("... looping... %s" % warnText[ind])
+                            if ind > len(warnText)-1: ind = ind - len(warnText)
+                            draw.text((xOffset+2,(ind+1)*10+yOffset), warnText[dispnd], "white")
+		            draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+                        dispInd  += 1 
+                        currLoop = 0
+                    if dispInd == 7: dispInd = 0
+                    if GPIO.event_detected(key['key1']): return
+                    currLoop += 1 
+            else:
+                pos = self.currSelected - self.currTop
+	        draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
 
-            pos = self.currSelected-self.currTop
-	    draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
-            
-            # this draw the text for each entry in the menu
-	    textColor = ['white']*self.size()
-            textColor[self.currSelected] = 'black'
+                # this draw the text for each entry in the menu
+	        textColor = ['white']*self.size()
+                textColor[self.currSelected] = 'black'
 	
-	    for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
-                entryName = entry[0]
-	        draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
-	        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+	        for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
+                    entryName = entry[0]
+	            draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
+	            draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+
+	if self.size() == 0: 
+	    print("waiting...")
+            return
 
         # check for user input and act accordingly (update menu, run action, etc)
         # ... couldn't this be done using callbacks? might be weird with recursion
         # ... I think doing it this way makes more sense
+
         while True:
             time.sleep(0.01) # don't need to poll for keys that often, high CPU without
-
-            if self.size() == 0: 
-		WaitForKey('key1')
-                return
                 
 	    if GPIO.event_detected(key['down']):
 		if self.currSelected < self.size()-1: # if not at the end of the menu entries
@@ -147,9 +157,9 @@ class Menu:
             # MAKE THIS "OR RIGHT ARROW" TOO
 	    elif GPIO.event_detected(key['key2']): # key2 is a selection, follow the action/submenu selected
                 currItem = self.entries.items()[self.currSelected]
-		if currItem[1].__class__.__name__=='Menu': # call function that entry describes
+		if currItem[1].__class__.__name__=='Menu': # display submenu
 		    currItem[1].display(device)
-		else: # display submenu
+		else: # call function that entry describes
 		    currItem[1].run()
 		break
 
@@ -241,24 +251,6 @@ def Shutdown():
                 return
 	elif GPIO.event_detected(key['key1']):
             return
-
-# makes breaking out of a 'with' possible... a bit clunky
-# https://stackoverflow.com/questions/11195140/break-or-exit-out-of-with-statement
-class fragile(object):
-    class Break(Exception):
-      """Break out of the with statement"""
-
-    def __init__(self, value):
-        self.value = value
-
-    def __enter__(self):
-        return self.value.__enter__()
-
-    def __exit__(self, etype, value, traceback):
-        error = self.value.__exit__(etype, value, traceback)
-        if etype == self.Break:
-            return True
-        return error	
 
 def Initgpio():
 
