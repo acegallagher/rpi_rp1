@@ -257,23 +257,21 @@ def Shutdown(device):
 # proposition user
 def DrawText(device, textList):
         totCharWidth = 22
-        strOne = ' '*int((totCharWidth - len(textList[0]))/2+1)
-        strTwo = ' '*int((totCharWidth - len(textList[1]))/2+1)
-        strThr = ' '*int((totCharWidth - len(textList[2]))/2+1)
-        strOne = strOne + textList[0]
-        strTwo = strTwo + textList[1]
-        strThr = strThr + textList[2]
+        strOneOff = 64-len(textList[0])/22*64
+        strTwoOff = 64-len(textList[1])/22*64
+        strThrOff = 64-len(textList[2])/22*64
+
 	with canvas(device) as draw:
                 draw.rectangle((2,2,124,62), outline='white', fill='black')
                 if len(textList) == 1:
-	                draw.text((0,27), strOne, 'white')
+	                draw.text((strOneOff,27), strOne, 'white')
                 if len(textList) == 1:
-	                draw.text((0,16), strOne, 'white')
-	                draw.text((0,38), strTwo,'white')
+	                draw.text((strOneOff,16), strOne, 'white')
+	                draw.text((strTwoOff,38), strTwo,'white')
                 if len(textList) == 3:
-	                draw.text((0,8), strOne, 'white')
-	                draw.text((0,27), strTwo, 'white')
-	                draw.text((0,46), strThr,'white')
+	                draw.text((strOneOff,8), strOne, 'white')
+	                draw.text((strOneOff,27), strTwo, 'white')
+	                draw.text((strOneOff,46), strThr,'white')
 
 def Initgpio():
 
