@@ -105,6 +105,9 @@ class Menu:
                 entryName = entry[0]
 	        draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
 	        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+
+                # draw.text((xOffset,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
+	        # draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
                 ind = ind+1
 
         # check for user input and act accordingly (update menu, run action, etc)
@@ -130,7 +133,7 @@ class Menu:
                     if self.currTop > self.currSelected: # selected past current buffer, display next 5 entries
                         self.currTop = self.currSelected
                 else:
-                    self.currSelected = self.size()
+                    self.currSelected = self.size()-1
                     self.currTop = self.size()-5
                     
                 break # exit loop and redraw menu
@@ -141,7 +144,7 @@ class Menu:
 		if currItem[1].__class__.__name__=='Menu': # call function that entry describes
 		    currItem[1].display(device)
 		else: # display submenu
-		    currItem[1]()
+		    currItem[1].run()
 		break
 
             elif GPIO.event_detected(key['key1']):
@@ -263,7 +266,7 @@ def main():
         mainMenu.addSubMenu ('sample packs', samplesMenu)
         mainMenu.addSubMenu ('system info' , sysMenu)
         mainMenu.addAction  ('shutdown'    , Shutdown)
-	mainMenu.addAction  ('test'    , Placeholder)
+	#mainMenu.addAction  ('test'    , Placeholder)
     
         # ##########################
         # samples submenus
