@@ -69,7 +69,7 @@ class Menu:
         print()
 	
     def drawHeader(self, device, draw): # draw title and notifiers
-	print("made it there... %s" % self.name)
+
 	draw.rectangle((0,0,128,12), outline='white', fill='white')	    # draw header/title
 	draw.text((2,0), self.name, 'black')
 	if IsConnected()==1: # draw OP1 status marker in top corner 
@@ -77,11 +77,11 @@ class Menu:
 	else:
 	    draw.rectangle((116,2,124,10), outline='black', fill='white')
 
-            # it would be nice to eventually have a battery indicator, finish this at some point
-	    # if GPIO.event_detected(lowBat):
- 	    # 	draw.rectangle((96,3,108,9), outline='black', fill='black')
-	    # else:
-	    # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
+        # it would be nice to eventually have a battery indicator, finish this at some point
+        # if GPIO.event_detected(lowBat):
+        # 	draw.rectangle((96,3,108,9), outline='black', fill='black')
+        # else:
+        # 	draw.rectangle((96,3,108,9), outline='black', fill='white')
 		
 
     def display(self, device): # put this Menu onto the screen 
@@ -198,8 +198,8 @@ class Action:
     def name(self):
         return self.name
 
-    def run(self): 
-        self.action()
+    def run(self, device): 
+        self.action(device)
 
 # SYSTEM UTILITIES                                        
 # def run_cmd(cmd):
