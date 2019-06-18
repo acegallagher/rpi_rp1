@@ -208,10 +208,10 @@ class Action:
         self.action(device)
 
 # SYSTEM UTILITIES                                        
-# def run_cmd(cmd):
-# 	p = Popen(cmd, shell=True, stdout=PIPE)
-# 	output = p.communicate()[0]
-# 	return output
+def RunCmd(cmd):
+	p = Popen(cmd, shell=True, stdout=PIPE)
+	output = p.communicate()[0]
+	return output
 
 def IsConnected():
     print("checking connectivity")
@@ -350,7 +350,7 @@ def Shutdown(device):
 	if GPIO.event_detected(key['key2']): # 
 	    with canvas(device) as draw:
                 DrawText(device,['GOODNIGHT?'])
-		run_cmd('sudo poweroff')
+		RunCmd('sudo poweroff')
                 return
 	elif GPIO.event_detected(key['key1']):
             return
