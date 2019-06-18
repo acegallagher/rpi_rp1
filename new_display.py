@@ -264,16 +264,16 @@ def DrawText(device, textList):
 	#                 draw.text((strThrOff,46) , textList[2] , 'white')
 
 	with canvas(device) as draw:
-                draw.rectangle((2,2,124,62), outline='white', fill='black')
-                if len(textList) == 1:
- 	                draw.text((maxOff,27) , textList[0], 'white')
-                if len(textList) == 1:
-	                draw.text((maxOff,16) , textList[0] , 'white')
-	                draw.text((maxOff,38) , textList[1] , 'white')
-                if len(textList) == 3:
-	                draw.text((maxOff,8)  , textList[0] , 'white')
-	                draw.text((maxOff,27) , textList[1] , 'white')
-	                draw.text((maxOff,46) , textList[2] , 'white')
+            draw.rectangle((2,2,124,62), outline='white', fill='black')
+            if len(textList) == 1:
+ 	        draw.text((maxOff,27) , textList[0], 'white')
+            if len(textList) == 2:
+	        draw.text((maxOff,16) , textList[0] , 'white')
+	        draw.text((maxOff,38) , textList[1] , 'white')
+            if len(textList) == 3:
+	        draw.text((maxOff,8)  , textList[0] , 'white')
+	        draw.text((maxOff,27) , textList[1] , 'white')
+	        draw.text((maxOff,46) , textList[2] , 'white')
 
 def DrawProgress(device, title, progress):
 	with canvas(device) as draw:
