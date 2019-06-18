@@ -245,10 +245,9 @@ def WaitForKey(waitkey):
 def DrawText(device, textList):
         totCharWidth = 22
         # centered
-        strOneOff = int(64-len(textList[0])/22.*64)
-        strTwoOff = int(64-len(textList[1])/22.*64)
-        strThrOff = int(64-len(textList[2])/22.*64)
-        maxOff = max([strOneOff, strTwoOff, strThrOff]) ## could be used to left align
+        for ind in range(textList):
+            txtOff[i] = int(64-len(textList[i])/22.*64)
+        maxOff = max(txtOff) ## could be used to left align
 
         # centered
 	# with canvas(device) as draw:
