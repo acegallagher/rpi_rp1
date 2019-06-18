@@ -1,8 +1,10 @@
 from __future__ import print_function # the future is now, and it is good
+
 import time, os, datetime, argparse
 import RPi.GPIO as GPIO
 import shutil   as sh
 import usb.core
+
 from luma.core.interface.serial import spi
 from luma.core.render           import canvas
 from luma.oled.device           import sh1106
@@ -18,7 +20,7 @@ lowBat      = 4
 VENDOR      = 0x2367
 PRODUCT     = 0x0002
 MOUNT_DIR   = '/media/op1'
-STORAGE_DIR = '/home/ace/' # dir where you checkout the git repo
+STORAGE_DIR = '/home/ace/' # where you checkout the repo... these dirs can probably be better organized (XDG etc)
 PROJECT_DIR = '/rpi_rp1/'
 USBID_OP1   = '*Teenage_OP-1*'
 
@@ -27,14 +29,14 @@ OP1_PATH = MOUNT_DIR
 # BUTTONS
 key={}
 key['key1'] = 21 # used as 'go back' key 
-key['key2'] = 20 # used as 'select item' key
-key['key3'] = 16
+key['key2'] = 20 # used as 'select entry' key
+key['key3'] = 16 # not used yet
 
-key['left']  = 5 
-key['up']    = 6
-key['down']  = 19
-key['right'] = 26
-key['press'] = 13
+key['left']  = 5 # also used as go back (soon)
+key['up']    = 6 # click through menu
+key['down']  = 19 # click through menu
+key['right'] = 26 # not used
+key['press'] = 13 # could also be used to select entry
  
 trackList  = ['/track_1.aif', '/track_2.aif','/track_3.aif','/track_4.aif']
 trackNames = ['track 1', 'track_2','track 3','track 4']
@@ -136,8 +138,8 @@ class Menu:
 	
         # check for user input and act accordingly (update menu, run action, etc)
         # ... couldn't this be done using callbacks? might be weird with recursion
-        # ... I think doing it this way makes more sense
-
+        # ... you'd need some sort of current menu global state variable
+        # ... I think doing it with callbacks makes more sense
         while True:
             time.sleep(0.01) # don't need to poll for keys that often, high CPU without
                 
@@ -164,7 +166,7 @@ class Menu:
                     
                 break # exit loop and redraw menu
 
-            # MAKE THIS "OR RIGHT ARROW" TOO
+            # MAKE THIS "OR ARROW PRESS" TOO
 	    elif GPIO.event_detected(key['key2']): # key2 is a selection, follow the action/submenu selected
                 currItem = self.entries.items()[self.currSelected]
 		if currItem[1].__class__.__name__=='Menu': # display submenu
@@ -239,6 +241,84 @@ def WaitForKey(waitkey):
                         return
 		time.sleep(.01)
 
+# proposition user
+def DrawText(device, textList):
+        totCharWidth = 22
+        # centered
+        strOneOff = int(64-len(textList[0])/22.*64)
+        strTwoOff = int(64-len(textList[1])/22.*64)
+        strThrOff = int(64-len(textList[2])/22.*64)
+        maxOff = max([strOneOff, strTwoOff, strThrOff]) ## could be used to left align
+
+	with canvas(device) as draw:
+                draw.rectangle((2,2,124,62), outline='white', fill='black')
+                if len(textList) == 1:
+ 	                draw.text((strOneOff,27) , textList[0], 'white')
+                if len(textList) == 1:
+	                draw.text((strOneOff,16) , textList[0] , 'white')
+	                draw.text((strTwoOff,38) , textList[1] , 'white')
+                if len(textList) == 3:
+	                draw.text((strOneOff,8)  , textList[0] , 'white')
+	                draw.text((strOneTwo,27) , textList[1] , 'white')
+	                draw.text((strOneThr,46) , textList[2] , 'white')
+
+def DrawProgress(device, title, progress):
+	with canvas(device) as draw:
+		progpix=progress*64
+		draw.text((16,8),title,'white')
+		draw.rectangle((32,32,96,42), outline='white', fill='black')
+		draw.rectangle((32,32,32+progpix,42), outline='white', fill='white')
+
+
+# ##############################
+# action functions used in menu
+# FILE OPERATIONS
+def BackupTape(device):
+
+	if IsConnected():
+		ForceDir(MOUNT_DIR)
+		mountpath = getmountpath()
+		print(' > OP-1 device path: %s', mountpath)
+		MountDevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
+		print(' > Device mounted at %s' % MOUNT_DIR)
+
+	if os.path.exists(OP1_PATH)==1:
+
+		DrawText(device,['BACKUP TAPE?',' 1-CONFIRM',' 2-CANCEL'])
+		while True:
+			if GPIO.event_detected(key['key2']):
+				print('copying')
+				cdate=datetime.datetime.now()
+                                tdate=datetime.date.today()
+				dpath=STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/'+str(tdate)+' '+cdate.strftime('%I:%M%p')
+                                copyList = [str(OP1_PATH)+'/tape/'+str(trackList[i]) for i in range(len(trackList))]
+ 
+				if os.path.exists(dpath)==0:
+					os.mkdir(dpath)
+				#else throw exception?
+                                
+				DrawProgress(device,'backing up tape...',0)
+                                for iFile, fileName in enumerate(copyList):
+				        sh.copy(fileName,dpath)
+				        print('%s copied' % trackNames[iFile])
+                                        drawProgress(device, ('backed up %s' % trackNames[iFile]), (iFile+1)*0.20)
+
+				unmountdevice(MOUNT_DIR)
+				DrawProgress(device,'back up done!',1)
+				time.sleep(.5)
+				return
+
+			elif GPIO.event_detected(key['key1']):
+				return
+	else:
+		print('no op1 detected')
+		print('Is your device connected and in disk mode?')
+		print('  1-Return to Menu')
+		drawText(device,['no op1 found','1-return'])
+		wait(keys,'key1')
+		return
+
+
 def Placeholder():
     print("\n this function hasn't been implemented yet")
 
@@ -254,32 +334,6 @@ def Shutdown(device):
                 return
 	elif GPIO.event_detected(key['key1']):
             return
-# proposition user
-def DrawText(device, textList):
-        totCharWidth = 22
-        # left aligned but centered
-        strOneOff = int(64-len(textList[0])/22.*64)
-        strTwoOff = int(64-len(textList[1])/22.*64)
-        strThrOff = int(64-len(textList[2])/22.*64)
-        #actually centered
-        strOneOff = int((128-len(textList[0])/22.*128)/2)
-        strTwoOff = int((128-len(textList[1])/22.*128)/2)
-        strThrOff = int((128-len(textList[2])/22.*128)/2)
-        print(strOneOff)
-        print(strTwoOff)
-        print(strThrOff)
-
-	with canvas(device) as draw:
-                draw.rectangle((2,2,124,62), outline='white', fill='black')
-                if len(textList) == 1:
- 	                draw.text((strOneOff,27) , textList[0], 'white')
-                if len(textList) == 1:
-	                draw.text((strOneOff,16) , textList[0] , 'white')
-	                draw.text((strTwoOff,38) , textList[1] , 'white')
-                if len(textList) == 3:
-	                draw.text((strOneOff,8)  , textList[0] , 'white')
-	                draw.text((strOneOff,27) , textList[1] , 'white')
-	                draw.text((strOneOff,46) , textList[2] , 'white')
 
 def Initgpio():
 
@@ -337,7 +391,7 @@ def main():
         mainMenu = Menu("MAIN", _exitable=False) ## don't let someone leave the main menu
 
         # and these will be entries in the menu
-        backupTape   = Action("BACKUP", Placeholder) # entry that calls backup tapes function
+        backupTape   = Action("BACKUP", BackupTape) # entry that calls backup tapes function
         tapeDownMenu = Menu("MAIN>TAPES") # a menu that lists the btapes on the rpi, available for upload to the OP1
         samplesMenu  = Menu("MAIN>SAMPLES") # a menu that lists system entries, such as wifi, etc. 
         sysMenu      = Menu("MAIN>SYS") # a menu that lists system entries, such as wifi, etc. 
@@ -370,4 +424,3 @@ def main():
 
 if __name__ == '__main__':
         main()
-
