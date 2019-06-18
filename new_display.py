@@ -247,7 +247,7 @@ def DrawText(device, textList):
         
         txtOff = list()
         for ind in range(len(textList)):
-            txtOff[ind] = int(64-len(textList[ind])/22.*64)
+            txtOff.append(int(64-len(textList[ind])/22.*64))
         maxOff = max(txtOff) ## could be used to left align
 
         # centered
