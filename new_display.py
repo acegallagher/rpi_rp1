@@ -259,8 +259,8 @@ def DrawText(device, textList):
 	                draw.text((strTwoOff,38) , textList[1] , 'white')
                 if len(textList) == 3:
 	                draw.text((strOneOff,8)  , textList[0] , 'white')
-	                draw.text((strOneTwo,27) , textList[1] , 'white')
-	                draw.text((strOneThr,46) , textList[2] , 'white')
+	                draw.text((strTwoOff,27) , textList[1] , 'white')
+	                draw.text((strThrOff,46) , textList[2] , 'white')
 
 def DrawProgress(device, title, progress):
 	with canvas(device) as draw:
