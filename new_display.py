@@ -39,17 +39,17 @@ key['right'] = 26 # not used
 key['press'] = 13 # could also be used to select entry
  
 trackList  = ['/track_1.aif', '/track_2.aif','/track_3.aif','/track_4.aif']
-trackNames = ['track 1', 'track_2','track 3','track 4']
+trackNames = ['track 1', 'track 2','track 3','track 4']
 nTracks    = len(trackList)
 
 class Menu:
 
     def __init__(self, _name, _exitable=True):
-        self.entries      = OrderedDict()
-        self.name         = _name 
-        self.currSelected = 0 # current selected entry
-        self.currTop      = 0 # current entry at top of menu
-        self.exitable     = _exitable
+        self.entries      = OrderedDict() # display menu items in order they're added
+        self.name         = _name         # 
+        self.currSelected = 0             # current selected entry to highlight
+        self.currTop      = 0             # current entry displayed at top of menu screen
+        self.exitable     = _exitable     # are you allowed to leave this particular menu
 
     # these can probably be combined into add entry, and then do a try:except when you actually call the thing
     def addAction(self, actionName, action):
@@ -155,7 +155,6 @@ class Menu:
                 else:
                     self.currSelected = 0 
                     self.currTop = 0 
-                    
                 break # exit while loop which redraws the menu
 
 	    elif GPIO.event_detected(key['up']): 
@@ -167,7 +166,6 @@ class Menu:
                     self.currSelected = self.size()-1
                     self.currTop = self.size()-5
                     if self.currTop < 0: self.currTop=0
-                    
                 break # exit loop and redraw menu
 
             # MAKE THIS "OR ARROW PRESS" TOO
@@ -193,67 +191,63 @@ class Menu:
         # needs to be an exit condition somewhere...
         self.display(device) # recursion
   
-
+# probably don't actually need this, just pass a function instead of a menu class when you add an entry... :\
 class Action: 
-
     def __init__(self, _name, _function, _triggersExit=False):
         self.name   = _name
         self.action = _function
         self.triggersExit = _triggersExit
-
     def name(self):
         return self.name
-
     def run(self, device): 
         self.action(device)
 
 # SYSTEM UTILITIES                                        
 def RunCmd(cmd):
-	p = Popen(cmd, shell=True, stdout=PIPE)
-	output = p.communicate()[0]
-	return output
+    p = Popen(cmd, shell=True, stdout=PIPE)
+    output = p.communicate()[0]
+    return output
 
 def IsConnected():
     print("checking connectivity")
     return usb.core.find(idVendor=VENDOR, idProduct=PRODUCT) is not None
 
 def GetMountPath():
-  o = os.popen('readlink -f /dev/disk/by-id/' + USBID_OP1).read()
-  if USBID_OP1 in o:
-    raise RuntimeError('Error getting OP-1 mount path: {}'.format(o))
-  else:
-    return o.rstrip()
+    o = os.popen('readlink -f /dev/disk/by-id/' + USBID_OP1).read()
+    if USBID_OP1 in o:
+        raise RuntimeError('Error getting OP-1 mount path: {}'.format(o))
+    else:
+        return o.rstrip()
 
 def MountDevice(source, target, fs, options=''):
-  ret = os.system('mount {} {}'.format(source, target))
-  if ret not in (0, 8192):
-    raise RuntimeError('Error mounting {} on {}: {}'.format(source, target, ret))
+    ret = os.system('mount {} {}'.format(source, target))
+    if ret not in (0, 8192):
+        raise RuntimeError('Error mounting {} on {}: {}'.format(source, target, ret))
 
 def UnmountDevice(target):
-  ret = os.system('umount {}'.format(target))
-  if ret != 0:
-    raise RuntimeError('Error unmounting {}: {}'.format(target, ret))
+    ret = os.system('umount {}'.format(target))
+    if ret != 0:
+        raise RuntimeError('Error unmounting {}: {}'.format(target, ret))
 
 def ForceDir(path):
-  if not os.path.isdir(path):
-    os.makedirs(path)
+    if not os.path.isdir(path):
+        os.makedirs(path)
 
 # waits for a keypress 
 def WaitForKey(waitkey):
-	while True:
-		if GPIO.event_detected(key[waitkey]):
-                        print(waitkey)
-                        return
-		time.sleep(.01)
+    while True:
+	if GPIO.event_detected(key[waitkey]):
+            print(waitkey)
+            return
+	time.sleep(.01)
 
 # proposition user, will only print first three strings in textList
 def DrawText(device, textList):
-        totCharWidth = 22
         
-        txtOff = list()
-        for ind in range(len(textList)):
-	    print(len(textList[ind]))
-            txtOff.append(int(64-(len(textList[ind])/2.)*6))
+    txtOff = list()
+    for ind in range(len(textList)):
+        # 64 is the number of pixels for half the screen, 6 is the pixel width of each letter
+        txtOff.append(int(64-(len(textList[ind])/2.)*6))
         maxOff = min(txtOff) ## could be used to left align
         print("====================")
         print(maxOff)
@@ -262,15 +256,16 @@ def DrawText(device, textList):
 	# with canvas(device) as draw:
         #         draw.rectangle((2,2,124,62), outline='white', fill='black')
         #         if len(textList) == 1:
- 	#                 draw.text((strOneOff,27) , textList[0], 'white')
+ 	#                 draw.text((txtOff[0],27) , textList[0], 'white')
         #         if len(textList) == 1:
-	#                 draw.text((strOneOff,16) , textList[0] , 'white')
-	#                 draw.text((strTwoOff,38) , textList[1] , 'white')
+	#                 draw.text((txtOff[0],16) , textList[0] , 'white')
+	#                 draw.text((txtOff[1],38) , textList[1] , 'white')
         #         if len(textList) == 3:
-	#                 draw.text((strOneOff,8)  , textList[0] , 'white')
-	#                 draw.text((strTwoOff,27) , textList[1] , 'white')
-	#                 draw.text((strThrOff,46) , textList[2] , 'white')
+	#                 draw.text((txtOff[0],8)  , textList[0] , 'white')
+	#                 draw.text((txtOff[1],27) , textList[1] , 'white')
+	#                 draw.text((txtOff[2],46) , textList[2] , 'white')
 
+        # left justified
 	with canvas(device) as draw:
             draw.rectangle((2,2,124,62), outline='white', fill='black')
             if len(textList) == 1:
@@ -284,16 +279,15 @@ def DrawText(device, textList):
 	        draw.text((maxOff,46) , textList[2] , 'white')
 
 def DrawProgress(device, title, progress):
-	with canvas(device) as draw:
-		progpix=progress*64
-		draw.text((16,8),title,'white')
-		draw.rectangle((32,32,96,42), outline='white', fill='black')
-		draw.rectangle((32,32,32+progpix,42), outline='white', fill='white')
-
+    with canvas(device) as draw:
+	progpix=progress*64
+	draw.text((16,8),title,'white')
+	draw.rectangle((32,32,96,42), outline='white', fill='black')
+	draw.rectangle((32,32,32+progpix,42), outline='white', fill='white')
 
 # ##############################
-# action functions used in menu
-# FILE OPERATIONS
+# functions used for menu entries
+
 def BackupTape(device):
 
 	if IsConnected():
@@ -355,7 +349,7 @@ def Shutdown(device):
 	elif GPIO.event_detected(key['key1']):
             return
 
-def Initgpio():
+def InitGPIO():
 
 	verboseprint('Initializing GPIO')
 	GPIO.setmode(GPIO.BCM)
@@ -389,6 +383,7 @@ def DrawSplash(device):
 		draw.text((0,38),'         ACE         ','white')
 	time.sleep(2.0)
 
+# ###################################################
 # parse args and run the code!
 def main():
 
@@ -439,7 +434,7 @@ def main():
         sysMenu.addAction('shutdown', shutdown)
 
         DrawSplash(device)
-        Initgpio()
+        InitGPIO()
         mainMenu.display(device) # this should loop forever
 
 if __name__ == '__main__':
