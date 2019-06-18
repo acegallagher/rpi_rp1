@@ -247,8 +247,9 @@ def DrawText(device, textList):
         
         txtOff = list()
         for ind in range(len(textList)):
-            txtOff.append(int(64-len(textList[ind])/30.*64))
-        maxOff = max(txtOff) ## could be used to left align
+	    print(len(textList[ind]))
+            txtOff.append(int(64-(len(textList[ind])/2.)*6))
+        maxOff = min(txtOff) ## could be used to left align
         print("====================")
         print(maxOff)
 
