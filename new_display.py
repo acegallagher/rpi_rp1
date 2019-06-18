@@ -245,7 +245,7 @@ def WaitForKey(waitkey):
 def DrawText(device, textList):
         totCharWidth = 22
         # centered
-        for ind in range(textList):
+        for ind in range(len(textList)):
             txtOff[i] = int(64-len(textList[i])/22.*64)
         maxOff = max(txtOff) ## could be used to left align
 
