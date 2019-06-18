@@ -140,8 +140,12 @@ class Menu:
         # ... couldn't this be done using callbacks? might be weird with recursion
         # ... you'd need some sort of current menu global state variable
         # ... I think doing it with callbacks makes more sense
+        status = IsConnected()
         while True:
             time.sleep(0.01) # don't need to poll for keys that often, high CPU without
+
+            if status != IsConnected(): # state change!
+                break
                 
 	    if GPIO.event_detected(key['down']):
 		if self.currSelected < self.size()-1: # if not at the end of the menu entries
@@ -319,7 +323,7 @@ def BackupTape(device):
 				print('%s copied' % trackNames[iFile])
                                 DrawProgress(device, ('backed up %s' % trackNames[iFile]), (iFile+1)*0.20)
                                 
-			    unmountdevice(MOUNT_DIR)
+			    UnmountDevice(MOUNT_DIR)
 			    DrawProgress(device,'back up done!',1)
 			    time.sleep(.5)
 			    return
