@@ -250,17 +250,30 @@ def DrawText(device, textList):
         strThrOff = int(64-len(textList[2])/22.*64)
         maxOff = max([strOneOff, strTwoOff, strThrOff]) ## could be used to left align
 
+        # centered
+	# with canvas(device) as draw:
+        #         draw.rectangle((2,2,124,62), outline='white', fill='black')
+        #         if len(textList) == 1:
+ 	#                 draw.text((strOneOff,27) , textList[0], 'white')
+        #         if len(textList) == 1:
+	#                 draw.text((strOneOff,16) , textList[0] , 'white')
+	#                 draw.text((strTwoOff,38) , textList[1] , 'white')
+        #         if len(textList) == 3:
+	#                 draw.text((strOneOff,8)  , textList[0] , 'white')
+	#                 draw.text((strTwoOff,27) , textList[1] , 'white')
+	#                 draw.text((strThrOff,46) , textList[2] , 'white')
+
 	with canvas(device) as draw:
                 draw.rectangle((2,2,124,62), outline='white', fill='black')
                 if len(textList) == 1:
- 	                draw.text((strOneOff,27) , textList[0], 'white')
+ 	                draw.text((maxOff,27) , textList[0], 'white')
                 if len(textList) == 1:
-	                draw.text((strOneOff,16) , textList[0] , 'white')
-	                draw.text((strTwoOff,38) , textList[1] , 'white')
+	                draw.text((maxOff,16) , textList[0] , 'white')
+	                draw.text((maxOff,38) , textList[1] , 'white')
                 if len(textList) == 3:
-	                draw.text((strOneOff,8)  , textList[0] , 'white')
-	                draw.text((strTwoOff,27) , textList[1] , 'white')
-	                draw.text((strThrOff,46) , textList[2] , 'white')
+	                draw.text((maxOff,8)  , textList[0] , 'white')
+	                draw.text((maxOff,27) , textList[1] , 'white')
+	                draw.text((maxOff,46) , textList[2] , 'white')
 
 def DrawProgress(device, title, progress):
 	with canvas(device) as draw:
@@ -281,28 +294,27 @@ def BackupTape(device):
 		print(' > OP-1 device path: %s', mountpath)
 		MountDevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
 		print(' > Device mounted at %s' % MOUNT_DIR)
+	        if os.path.exists(OP1_PATH)==1:
 
-	if os.path.exists(OP1_PATH)==1:
-
-		DrawText(device,['BACKUP TAPE?',' 1-CONFIRM',' 2-CANCEL'])
-		while True:
+		    DrawText(device,['BACKUP TAPE?',' 1-CANCEL',' 2-CONFIRM'])
+		    while True:
 			if GPIO.event_detected(key['key2']):
-				print('copying')
-				cdate=datetime.datetime.now()
-                                tdate=datetime.date.today()
-				dpath=STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/'+str(tdate)+' '+cdate.strftime('%I:%M%p')
-                                copyList = [str(OP1_PATH)+'/tape/'+str(trackList[i]) for i in range(len(trackList))]
+			    print('copying')
+			    cdate=datetime.datetime.now()
+                            tdate=datetime.date.today()
+			    dpath=STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/'+str(tdate)+' '+cdate.strftime('%I:%M%p')
+                            copyList = [str(OP1_PATH)+'/tape/'+str(trackList[i]) for i in range(len(trackList))]
  
-				if os.path.exists(dpath)==0:
-					os.mkdir(dpath)
-				#else throw exception?
+			    if os.path.exists(dpath)==0:
+				os.mkdir(dpath)
+			    #else throw exception?
                                 
-				DrawProgress(device,'backing up tape...',0)
-                                for iFile, fileName in enumerate(copyList):
-				        sh.copy(fileName,dpath)
-				        print('%s copied' % trackNames[iFile])
-                                        drawProgress(device, ('backed up %s' % trackNames[iFile]), (iFile+1)*0.20)
-
+			    DrawProgress(device,'backing up tape...',0)
+                            for iFile, fileName in enumerate(copyList):
+				sh.copy(fileName,dpath)
+				print('%s copied' % trackNames[iFile])
+                                drawProgress(device, ('backed up %s' % trackNames[iFile]), (iFile+1)*0.20)
+                                
 				unmountdevice(MOUNT_DIR)
 				DrawProgress(device,'back up done!',1)
 				time.sleep(.5)
@@ -314,7 +326,7 @@ def BackupTape(device):
 		print('no op1 detected')
 		print('Is your device connected and in disk mode?')
 		print('  1-Return to Menu')
-		drawText(device,['no op1 found','1-return'])
+		DrawText(device,['OP1 NOT CONNECTED','1-RETURN'])
 		wait(keys,'key1')
 		return
 
