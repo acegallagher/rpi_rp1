@@ -241,12 +241,12 @@ def WaitForKey(waitkey):
                         return
 		time.sleep(.01)
 
-# proposition user
+# proposition user, will only print first three strings in textList
 def DrawText(device, textList):
         totCharWidth = 22
         # centered
         for ind in range(len(textList)):
-            txtOff[i] = int(64-len(textList[i])/22.*64)
+            txtOff[ind] = int(64-len(textList[ind])/22.*64)
         maxOff = max(txtOff) ## could be used to left align
 
         # centered
