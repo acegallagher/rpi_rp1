@@ -210,7 +210,8 @@ class Action:
 # 	return output
 
 def IsConnected():
-  return usb.core.find(idVendor=VENDOR, idProduct=PRODUCT) is not None
+    print("checking connectivity")
+    return usb.core.find(idVendor=VENDOR, idProduct=PRODUCT) is not None
 
 def GetMountPath():
   o = os.popen('readlink -f /dev/disk/by-id/' + USBID_OP1).read()
@@ -293,7 +294,7 @@ def BackupTape(device):
 
 	if IsConnected():
 		ForceDir(MOUNT_DIR)
-		mountpath = getmountpath()
+		mountpath = GetMountPath()
 		print(' > OP-1 device path: %s', mountpath)
 		MountDevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
 		print(' > Device mounted at %s' % MOUNT_DIR)
@@ -316,12 +317,12 @@ def BackupTape(device):
                             for iFile, fileName in enumerate(copyList):
 				sh.copy(fileName,dpath)
 				print('%s copied' % trackNames[iFile])
-                                drawProgress(device, ('backed up %s' % trackNames[iFile]), (iFile+1)*0.20)
+                                DrawProgress(device, ('backed up %s' % trackNames[iFile]), (iFile+1)*0.20)
                                 
-				unmountdevice(MOUNT_DIR)
-				DrawProgress(device,'back up done!',1)
-				time.sleep(.5)
-				return
+			    unmountdevice(MOUNT_DIR)
+			    DrawProgress(device,'back up done!',1)
+			    time.sleep(.5)
+			    return
 
 			elif GPIO.event_detected(key['key1']):
 				return
