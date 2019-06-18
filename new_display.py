@@ -327,7 +327,7 @@ def BackupTape(device):
 		print('Is your device connected and in disk mode?')
 		print('  1-Return to Menu')
 		DrawText(device,['OP1 NOT CONNECTED','1-RETURN'])
-		wait(keys,'key1')
+		WaitForKey('key1')
 		return
 
 
