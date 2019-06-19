@@ -74,7 +74,7 @@ class Menu:
 
 	draw.rectangle((0,0,128,12), outline='white', fill='white') # draw header/title
 	draw.text((2,0), self.name, 'black')
-        draw.text((100,0), RunCmd("date +%R", 'black')
+        draw.text((85,1), RunCmd("date +%R"), 'black')
 	if IsConnected()==1: # draw OP1 status marker in top corner 
 	    draw.rectangle((116,2,124,10), outline='black', fill='black')
 	else:
@@ -436,8 +436,8 @@ def main():
     
         # ##########################
         # samples submenus
-        synthSamplesMenu = Menu("MAIN>SAMPLES>SYNTH") # a menu that lists system entries, such as wifi, etc.         
-        drumSamplesMenu  = Menu("MAIN>SAMPLES>DRUM") # a menu that lists system entries, such as wifi, etc.         
+        synthSamplesMenu = Menu("SAMPLES>SYNTH") # a menu that lists system entries, such as wifi, etc.         
+        drumSamplesMenu  = Menu("SAMPLES>DRUM") # a menu that lists system entries, such as wifi, etc.         
         samplesMenu.addSubMenu('synth samples', synthSamplesMenu)
         samplesMenu.addSubMenu('drum samples', drumSamplesMenu)
 
