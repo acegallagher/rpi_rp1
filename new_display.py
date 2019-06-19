@@ -209,7 +209,6 @@ def RunCmd(cmd):
     return output
 
 def IsConnected():
-    print("checking connectivity")
     return usb.core.find(idVendor=VENDOR, idProduct=PRODUCT) is not None
 
 def GetMountPath():
@@ -331,9 +330,21 @@ def BackupTape(device):
 		DrawText(device,['OP1 NOT CONNECTED','1-RETURN'])
 		WaitForKey('key1')
 		return
+def WifiInfo(device):
+    getip="ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}'"
+    getssid="iw dev wlan0 link | grep SSID"
+    ssidstat=run_cmd(getip)
+    netstat=run_cmd(getip)
+    ip=netstat.split('\n')[0]
+    ssid=ssidstat.split('\n')[0]
 
+    print('wlan0 status\n %s' % ip)
+    print('wlan0 essid\n %s' % ssid)
 
-def Placeholder():
+    DrawText(device,['WIFI CONFIG!','IP: %s' % ip, 'SSID: %s' % ssid])
+    WaitForKey('key1')
+
+def Placeholder(device):
     print("\n this function hasn't been implemented yet")
 
 def Shutdown(device):
@@ -427,7 +438,7 @@ def main():
         samplesMenu.addSubMenu('synth samples', synthSamplesMenu)
         samplesMenu.addSubMenu('drum samples', drumSamplesMenu)
 
-        wifiInfo       = Action("WIFI", Placeholder) # entry that calls backup tapes function
+        wifiInfo       = Action("WIFI", WifiInfo) # entry that calls backup tapes function
         reloadFirmware = Action("FIRMWARE", Placeholder) # entry that calls backup tapes function
         sysMenu.addAction('wifi info', wifiInfo)
         sysMenu.addAction('load firmware', reloadFirmware)
