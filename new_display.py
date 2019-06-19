@@ -250,6 +250,7 @@ def DrawText(device, textList):
         maxOff = min(txtOff) ## could be used to left align
         print("====================")
         print(maxOff)
+    if maxOff < 0: maxOff=0
 
         # centered
 	# with canvas(device) as draw:
@@ -331,14 +332,15 @@ def BackupTape(device):
 		WaitForKey('key1')
 		return
 def WifiInfo(device):
-    getip="ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}'"
-    getssid="iw dev wlan0 link | grep SSID"
-    ssidstat=RunCmd(getip)
-    netstat=RunCmd(getip)
-    ip=netstat.split('\n')[0]
-    ssid=ssidstat.split('\n')[0]
+    # clean this up
+    getip    = "ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}'"
+    getssid  = "iw dev wlan0 link | grep SSID"
+    ssidstat = RunCmd(getip)
+    netstat  = RunCmd(getssid)
+    ip       = netstat.split('\n')[0]
+    ssid     = ssidstat.split('\n')[0]
 
-    print('wlan0 status\n %s' % ip)
+    print('wlan0 ip\n %s' % ip)
     print('wlan0 essid\n %s' % ssid)
 
     DrawText(device,['WIFI CONFIG!','IP: %s' % ip, 'SSID: %s' % ssid])
