@@ -333,8 +333,8 @@ def BackupTape(device):
 def WifiInfo(device):
     getip="ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}'"
     getssid="iw dev wlan0 link | grep SSID"
-    ssidstat=run_cmd(getip)
-    netstat=run_cmd(getip)
+    ssidstat=RunCmd(getip)
+    netstat=RunCmd(getip)
     ip=netstat.split('\n')[0]
     ssid=ssidstat.split('\n')[0]
 
