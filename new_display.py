@@ -72,8 +72,9 @@ class Menu:
 	
     def drawHeader(self, device, draw): # draw title and notifiers
 
-	draw.rectangle((0,0,128,12), outline='white', fill='white')	    # draw header/title
+	draw.rectangle((0,0,128,12), outline='white', fill='white') # draw header/title
 	draw.text((2,0), self.name, 'black')
+        draw.text((100,0), RunCmd("date +%R", 'black')
 	if IsConnected()==1: # draw OP1 status marker in top corner 
 	    draw.rectangle((116,2,124,10), outline='black', fill='black')
 	else:
