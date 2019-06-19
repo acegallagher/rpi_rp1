@@ -335,8 +335,8 @@ def WifiInfo(device):
     # clean this up
     getip    = "ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}'"
     getssid  = "iw dev wlan0 link | grep SSID"
-    ssidstat = RunCmd(getip)
-    netstat  = RunCmd(getssid)
+    netstat = RunCmd(getip)
+    ssidstat  = RunCmd(getssid)
     ip       = netstat.split('\n')[0]
     ssid     = ssidstat.split('\n')[0]
 
