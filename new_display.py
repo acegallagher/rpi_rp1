@@ -15,6 +15,13 @@ from collections                import OrderedDict
 # 1: menu    -- menu entries that get displayed as a list on the screen 
 # 2: actions -- menu entries that call functions to complete tasks (i.e  backing up the tape)
 
+# TODO: 
+# ######
+# refactor Menu class out of main program and cleanup
+# ... actually use the verboseprint function
+# ... implement low battery info from adafruit lipo charger
+# pick code style that's actually internally consistent
+
 # GLOBALS
 lowBat      = 4
 VENDOR      = 0x2367
@@ -40,6 +47,7 @@ key['press'] = 13 # could also be used to select entry
  
 trackList  = ['/track_1.aif', '/track_2.aif','/track_3.aif','/track_4.aif']
 trackNames = ['track 1', 'track 2','track 3','track 4']
+tapesOnRP1 = [['']]
 nTracks    = len(trackList)
 
 class Menu:
@@ -71,7 +79,7 @@ class Menu:
         print()
 	
     def drawHeader(self, device, draw): # draw title and notifiers
-
+        draw.rectangle((0,0,127,63), outline='white', fill='black')
 	draw.rectangle((0,0,128,12), outline='white', fill='white') # draw header/title
 	draw.text((2,0), self.name, 'black')
         draw.text((85,1), RunCmd("date +%R"), 'black')
@@ -79,6 +87,7 @@ class Menu:
 	    draw.rectangle((116,2,124,10), outline='black', fill='black')
 	else:
 	    draw.rectangle((116,2,124,10), outline='black', fill='white')
+
 
         # it would be nice to eventually have a battery indicator, finish this at some point
         # if GPIO.event_detected(lowBat):
@@ -90,15 +99,15 @@ class Menu:
     def display(self, device): # put this Menu onto the screen 
 
         # move these consts somewhere else that makes more sense
-	xOffset = 10 
-	yOffset = 4
+	xOffset = 12
+	yOffset = 2
 
         if self.size() != 0: 
 
             with canvas(device) as draw: # draw the menu with the current five entries and the highlighted entry
         	self.drawHeader(device, draw)
                 pos = self.currSelected - self.currTop
-        	draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+100, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
+        	draw.rectangle((xOffset, (pos+1)*10+yOffset, xOffset+120, ((pos+1)*10)+10+yOffset), outline='white', fill='white')
         
                 # this draw the text for each entry in the menu
         	textColor = ['white']*self.size()
@@ -106,11 +115,12 @@ class Menu:
         	
         	for ind, entry in enumerate(self.entries.items()[self.currTop:self.currTop+5]):
                     entryName = entry[0]
-        	    draw.text((xOffset+2,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
-                    if textColor[self.currSelected] == 'black': # draw an arrow... finish this!
-                        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
-                    else:
-                        draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+        	    draw.text((xOffset+3,(ind+1)*10+yOffset), entryName, textColor[ind+self.currTop])
+                    draw.rectangle((4, (ind+1)*10+7, 7, ((ind+1)*10)+9), outline='white', fill='white')
+                    # if textColor[self.currSelected] == 'black': # draw an arrow... finish this!
+                    #     draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
+                    # else:
+                    #     draw.rectangle((2, (ind+1)*10+8, 5, ((ind+1)*10)+10), outline='white', fill='white')
         
         else: # menu was empty, display warning... shouldn't happen often
             currLoop = 0 
@@ -122,6 +132,7 @@ class Menu:
 
 		    with canvas(device) as draw:
 			self.drawHeader(device,draw)
+                        draw.rectangle((0,0,127,63), outline='white', fill='black')
 			dispInd = 0 
 	                for textInd in range(indOff,indOff+5):
                             if textInd > len(warnText)-1: textInd = textInd - len(warnText)
@@ -241,11 +252,13 @@ def WaitForKey(waitkey):
             return
 	time.sleep(.01)
 
-# proposition user, will only print first three strings in textList
+# proposition user, will only print up to five strings in textList
 def DrawText(device, textList):
         
     txtOff = list()
     for ind in range(len(textList)):
+        if len(textList[ind]) >= 20:
+            textList[ind] = textList[ind][0:17] + "(!)" 
         # 64 is the number of pixels for half the screen, 6 is the pixel width of each letter
         txtOff.append(int(64-(len(textList[ind])/2.)*6))
         maxOff = min(txtOff) ## could be used to left align
@@ -253,22 +266,9 @@ def DrawText(device, textList):
         print(maxOff)
     if maxOff < 0: maxOff=0
 
-        # centered
-	# with canvas(device) as draw:
-        #         draw.rectangle((2,2,124,62), outline='white', fill='black')
-        #         if len(textList) == 1:
- 	#                 draw.text((txtOff[0],27) , textList[0], 'white')
-        #         if len(textList) == 1:
-	#                 draw.text((txtOff[0],16) , textList[0] , 'white')
-	#                 draw.text((txtOff[1],38) , textList[1] , 'white')
-        #         if len(textList) == 3:
-	#                 draw.text((txtOff[0],8)  , textList[0] , 'white')
-	#                 draw.text((txtOff[1],27) , textList[1] , 'white')
-	#                 draw.text((txtOff[2],46) , textList[2] , 'white')
-
-        # left justified
     with canvas(device) as draw:
-        draw.rectangle((2,2,124,62), outline='white', fill='black')
+        if len(textList) <= 4:
+            draw.rectangle((4,4,124,60), outline='white', fill='black')
         if len(textList) == 1:
  	    draw.text((maxOff,27) , textList[0], 'white')
         if len(textList) == 2:
@@ -278,6 +278,19 @@ def DrawText(device, textList):
 	    draw.text((maxOff,8)  , textList[0] , 'white')
 	    draw.text((maxOff,27) , textList[1] , 'white')
 	    draw.text((maxOff,46) , textList[2] , 'white')
+        if len(textList) == 4:
+            draw.text((maxOff,8)  , textList[0] , 'white')
+            draw.text((maxOff,21) , textList[1] , 'white')
+            draw.text((maxOff,34) , textList[2] , 'white')
+            draw.text((maxOff,47) , textList[3] , 'white')
+        if len(textList) == 5:
+            draw.rectangle((0,0,127,63), outline='white', fill='black')
+            draw.text((maxOff,5)  , textList[0] , 'white')
+            draw.text((maxOff,16) , textList[1] , 'white')
+            draw.text((maxOff,27) , textList[2] , 'white')
+            draw.text((maxOff,38) , textList[3] , 'white')
+            draw.text((maxOff,49) , textList[4] , 'white')
+
 
 def DrawProgress(device, title, progress):
     with canvas(device) as draw:
@@ -291,61 +304,156 @@ def DrawProgress(device, title, progress):
 
 def BackupTape(device):
 
-	if IsConnected():
-		ForceDir(MOUNT_DIR)
-		mountpath = GetMountPath()
-		print(' > OP-1 device path: %s', mountpath)
-		MountDevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
-		print(' > Device mounted at %s' % MOUNT_DIR)
-	        if os.path.exists(OP1_PATH)==1:
-
-		    DrawText(device,['BACKUP TAPE?',' 1-CANCEL',' 2-CONFIRM'])
-		    while True:
-			if GPIO.event_detected(key['key2']):
-			    print('copying')
-			    cdate=datetime.datetime.now()
-                            tdate=datetime.date.today()
-			    dpath=STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/'+str(tdate)+' '+cdate.strftime('%I:%M%p')
-                            copyList = [str(OP1_PATH)+'/tape/'+str(trackList[i]) for i in range(len(trackList))]
+    if IsConnected():
+	ForceDir(MOUNT_DIR)
+	mountpath = GetMountPath()
+	print(' > OP-1 device path: %s', mountpath)
+	MountDevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
+	print(' > Device mounted at %s' % MOUNT_DIR)
+	if os.path.exists(OP1_PATH)==1:
+            
+	    DrawText(device,['BACKUP TAPE?',' 1-CANCEL',' 2-CONFIRM'])
+	    while True:
+		if GPIO.event_detected(key['key2']):
+		    print('copying')
+		    cdate=datetime.datetime.now()
+                    tdate=datetime.date.today()
+		    dpath=STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/'+str(tdate)+' '+cdate.strftime('%I:%M%p')
+                    copyList = [str(OP1_PATH)+'/tape/'+str(trackList[i]) for i in range(len(trackList))]
  
-			    if os.path.exists(dpath)==0:
-				os.mkdir(dpath)
-			    #else throw exception?
+		    if os.path.exists(dpath)==0:
+			os.mkdir(dpath)
+			#else throw exception?
                                 
-			    DrawProgress(device,'backing up tape...',0)
-                            for iFile, fileName in enumerate(copyList):
-				sh.copy(fileName,dpath)
-				print('%s copied' % trackNames[iFile])
-                                DrawProgress(device, ('backed up %s' % trackNames[iFile]), (iFile+1)*0.20)
+		    DrawProgress(device,'backing up tape...',0)
+                    for iFile, fileName in enumerate(copyList):
+			sh.copy(fileName,dpath)
+			print('%s copied' % trackNames[iFile])
+                        DrawProgress(device, ('backed up %s' % trackNames[iFile]), (iFile+1)*0.20)
                                 
-			    UnmountDevice(MOUNT_DIR)
-			    DrawProgress(device,'back up done!',1)
-			    time.sleep(.5)
-			    return
+		    UnmountDevice(MOUNT_DIR)
+		    DrawProgress(device,'back up done!',1)
+		    return
 
-			elif GPIO.event_detected(key['key1']):
-				return
-	else:
-		print('no op1 detected')
-		print('Is your device connected and in disk mode?')
-		print('  1-Return to Menu')
-		DrawText(device,['OP1 NOT CONNECTED','1-RETURN'])
-		WaitForKey('key1')
-		return
+		elif GPIO.event_detected(key['key1']):
+		    return
+    else:
+	print('no op1 detected')
+	print('Is your device connected and in disk mode?')
+	print('  1-Return to Menu')
+	DrawText(device,['OP1 NOT CONNECTED','1-RETURN'])
+	WaitForKey('key1')
+	return
+
 def WifiInfo(device):
     # clean this up
     getip    = "ip addr show wlan0 | grep inet | awk '{print $2}' | cut -d/ -f1 | awk '{print $1}'"
-    getssid  = "iw dev wlan0 link | grep SSID | awk '{print $2}'"
-    netstat = RunCmd(getip)
-    ssidstat  = RunCmd(getssid)
+    getssid  = "iw dev wlan0 info | grep -i ssid | awk '{print $2}'"
+    getmac   = "iw dev wlan0 info | grep -i addr | awk '{print $2}'"
+    getchan  = "iw dev wlan0 info | grep -i chann | awk '{print $1 \" \" $2 \" \" $3  $4 }'"
+    netstat  = RunCmd(getip)
+    ssidstat = RunCmd(getssid)
+    macstat  = RunCmd(getmac)
+    chanstat = RunCmd(getchan)
     ip       = netstat.split('\n')[0]
     ssid     = ssidstat.split('\n')[0]
+    mac      = macstat.split('\n')[0]
+    chan     = chanstat
 
     print('wlan0 ip\n %s' % ip)
     print('wlan0 essid\n %s' % ssid)
 
-    DrawText(device,['WIFI CONFIG!','IP: %s' % ip, 'SSID: %s' % ssid])
+    DrawText(device, ['WIFI CONFIG!', 'SSID: %s' % ssid, 'IP:   %s' % ip, 'MAC:  %s' % mac, '%s' % chan])
     WaitForKey('key1')
+
+def LoadFirmware(device):
+    if IsConnected()==1: # draw OP1 status marker in top corner 
+	DrawText(device,['op1 connected','load firmware?','  1-back','  2-yup'])
+	while True:
+	    if GPIO.event_detected(key['key2']):
+		print('copying firmware')
+		DrawText(device,['copying...','...firmware'])
+		spath=STORAGE_DIR+'misc/op1_225.op1'
+		dpath='/media/pi/OP-1/'
+		sh.copy(spath,dpath)
+		return
+
+	    elif GPIO.event_detected(key['key1']):
+		return
+
+    else:
+	DrawText(device,['op1 not detected!','key-1 to return'])
+	WaitForKey('key1')
+
+	return
+
+def ScanTapes(device, tapeMenu): 
+    tapeDir = STORAGE_DIR+PROJECT_DIR+'/op1-tapebackups/'
+    print('updating tape index')
+    
+    lst = sorted([f for f in os.listdir(tapeDir) if not f.startswith('.')], key=str.lower) # no hidden files
+    print('[TAPES]\n')
+    for filename in lst:
+        print(filename)
+	fullPath = tapeDir + filename
+	tapesOnRP1.append([filename,fullPath])
+        backupTape  = Action(filename, LoadTape) # entry that calls backup tapes function
+        tapeEntry = tapeMenu.addAction(filename, backupTape)
+
+    tapesOnRP1.sort()
+
+def LoadTape(device, source):
+    keys={}
+    time.sleep(1)
+
+    if IsConnected():
+    	ForceDir(MOUNT_DIR)
+    	mountpath = GetMountPath()
+    	print(' > OP-1 device path: %s' % mountpath)
+    	MountDevice(mountpath, MOUNT_DIR, 'ext4', 'rw')
+    	print(' > Device mounted at %s' % MOUNT_DIR)
+
+
+    if os.path.exists(OP1_PATH)==1:
+    	
+    	print('op1 connected\n Download tape?\n (this overwrites!)\n   1-back\n    2-yes\n')
+    	DrawText(device,['op1 connected','load tape?',' 1- back','2-yes'])
+
+    	#response loop
+    	while True:
+    	    if GPIO.event_detected(key['key2']):
+    		print('downloading to op1')
+    		dpath=OP1_PATH+'/tape'
+
+                copyList = [str(source)+str(trackList[i]) for i in range(len(trackList))]
+                rmList = [str(dpath)+str(trackList[i]) for i in range(len(trackList))]
+                for rmFile in rmList:
+                    os.remove(rmFile)
+
+                drawProgress(device,'copying tape...',0)
+                for iFile, fileName in enumerate(copyList):
+    		    sh.copy(fileName,dpath)
+    		    print('%s copied' % trackNames[iFile])
+                    drawProgress(device,('copying %s' % trackNames[iFile]), (iFile+1)*0.20)
+
+    		    print(' > Unmounting OP-1')
+    		    unmountdevice(MOUNT_DIR)
+    		    print(' > Done.')
+    		    drawProgress(device,'finished copying!',1)
+    		    time.sleep(.5)
+    		    return
+
+    	    elif GPIO.event_detected(key['key1']):
+    		return
+    else:
+    	print('no op1 detected')
+    	print('Is your device connected and in disk mode?')
+    	print('  1-Return to Menu')
+
+    	DrawText(device,['no op1 found','1-return to menu'])
+    	WaitForKey(keys,'key1')
+    	return
+
 
 def Placeholder(device):
     print("\n this function hasn't been implemented yet")
@@ -420,15 +528,15 @@ def main():
         mainMenu = Menu("MAIN", _exitable=False) ## don't let someone leave the main menu
 
         # and these will be entries in the menu
-        backupTape   = Action("BACKUP", BackupTape) # entry that calls backup tapes function
-        tapeDownMenu = Menu("MAIN>TAPES") # a menu that lists the btapes on the rpi, available for upload to the OP1
-        samplesMenu  = Menu("MAIN>SAMPLES") # a menu that lists system entries, such as wifi, etc. 
-        sysMenu      = Menu("MAIN>SYS") # a menu that lists system entries, such as wifi, etc. 
-        shutdown     = Action("SHUTDOWN", Shutdown) # entry that calls backup tapes function
+        backupTape  = Action("BACKUP", BackupTape) # entry that calls backup tapes function
+        tapeMenu    = Menu("MAIN>TAPES") # a menu that lists the btapes on the rpi, available for upload to the OP1
+        samplesMenu = Menu("MAIN>SAMPLES") # a menu that lists system entries, such as wifi, etc. 
+        sysMenu     = Menu("MAIN>SYS") # a menu that lists system entries, such as wifi, etc. 
+        shutdown    = Action("SHUTDOWN", Shutdown) # entry that calls backup tapes function
 
         # add the entries to the menu, the order you add them is the order they're listed
         mainMenu.addAction  ('backup tape' , backupTape)
-        mainMenu.addSubMenu ('tape deck'   , tapeDownMenu)
+        mainMenu.addSubMenu ('tape deck'   , tapeMenu)
         mainMenu.addSubMenu ('sample packs', samplesMenu)
         mainMenu.addSubMenu ('system info' , sysMenu)
         mainMenu.addAction  ('shutdown'    , shutdown)
@@ -442,14 +550,15 @@ def main():
         samplesMenu.addSubMenu('drum samples', drumSamplesMenu)
 
         wifiInfo       = Action("WIFI", WifiInfo) # entry that calls backup tapes function
-        reloadFirmware = Action("FIRMWARE", Placeholder) # entry that calls backup tapes function
+        reloadFirmware = Action("FIRMWARE", LoadFirmware) # entry that calls backup tapes function
         sysMenu.addAction('wifi info', wifiInfo)
         sysMenu.addAction('load firmware', reloadFirmware)
         sysMenu.addAction('shutdown', shutdown)
 
         DrawSplash(device)
         InitGPIO()
-        mainMenu.display(device) # this should loop forever
+        ScanTapes(device, tapeMenu)
+        mainMenu.display(device) # this loops forever
 
 if __name__ == '__main__':
         main()
